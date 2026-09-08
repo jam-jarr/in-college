@@ -60,6 +60,22 @@
        01 WS-ACCOUNT-FILE-ENDED PIC X VALUE "N".
            88 ACCOUNT-FILE-ENDED VALUE "Y".
            88 ACCOUNT-FILE-AVAILABLE VALUE "N".
+
+       01 WS-PASSWORD-LENGTH PIC 99 VALUE 0.
+       01 WS-CHAR-INDEX PIC 99 VALUE 0.
+
+       01 WS-HAS-UPPERCASE PIC X VALUE "N".
+           88 HAS-UPPERCASE VALUE "Y".
+
+       01 WS-HAS-DIGIT PIC X VALUE "N".
+           88 HAS-DIGIT VALUE "Y".
+
+       01 WS-HAS-SPECIAL PIC X VALUE "N".
+           88 HAS-SPECIAL VALUE "Y".
+
+       01 WS-PASSWORD-VALID PIC X VALUE "N".
+           88 PASSWORD-VALID VALUE "Y".
+       
        PROCEDURE DIVISION.
 
        MAIN-PROCEDURE.
@@ -109,6 +125,10 @@
 
            IF INPUT-AVAILABLE
                MOVE WS-USER-INPUT(1:1) TO WS-CHOICE
+           END-IF
+           
+           IF WS-CHOICE = "2"
+               PERFORM CREATE-ACCOUNT
            END-IF
 
            *> close files before ending the program
@@ -184,5 +204,119 @@
            OPEN EXTEND ACCOUNT-FILE
            WRITE ACCOUNT-RECORD
            CLOSE ACCOUNT-FILE
+
+           EXIT.
+       
+       CREATE-ACCOUNT.
+
+           *> make sure another account can be created
+           IF WS-ACCOUNT-COUNT >= 5
+               STRING
+                   "All permitted accounts have been created, "
+                   "please come back later"
+                   INTO WS-MESSAGE
+               END-STRING
+
+               PERFORM WRITE-MESSAGE
+               EXIT PARAGRAPH
+           END-IF
+
+           *> determine which account slot to use
+           MOVE WS-ACCOUNT-COUNT TO WS-ACCOUNT-INDEX
+           ADD 1 TO WS-ACCOUNT-INDEX
+
+           *> read the username
+           MOVE "Please enter your username:" TO WS-MESSAGE
+           PERFORM WRITE-MESSAGE
+
+           PERFORM READ-USER-INPUT
+
+           MOVE WS-USER-INPUT(1:20)
+               TO WS-ACCOUNT-USERNAME(WS-ACCOUNT-INDEX)
+
+           *> read the password
+           MOVE "Please enter your password:" TO WS-MESSAGE
+           PERFORM WRITE-MESSAGE
+
+           PERFORM READ-USER-INPUT
+           
+           PERFORM VALIDATE-PASSWORD
+
+           IF NOT PASSWORD-VALID
+               MOVE "Invalid password, please try again."
+                   TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+               EXIT PARAGRAPH
+           END-IF
+
+           MOVE WS-USER-INPUT(1:12)
+               TO WS-ACCOUNT-PASSWORD(WS-ACCOUNT-INDEX)
+
+           *> update the number of saved accounts
+           MOVE WS-ACCOUNT-INDEX TO WS-ACCOUNT-COUNT
+
+           *> save the new account to the account file
+           PERFORM SAVE-ACCOUNT
+
+           MOVE "Account successfully created." TO WS-MESSAGE
+           PERFORM WRITE-MESSAGE
+
+           EXIT.
+
+
+       VALIDATE-PASSWORD.
+
+           *> reset validation values
+           MOVE 0 TO WS-PASSWORD-LENGTH
+           MOVE "N" TO WS-HAS-UPPERCASE
+           MOVE "N" TO WS-HAS-DIGIT
+           MOVE "N" TO WS-HAS-SPECIAL
+           MOVE "N" TO WS-PASSWORD-VALID
+
+           *> find the actual password length
+           MOVE FUNCTION LENGTH(FUNCTION TRIM(WS-USER-INPUT))
+               TO WS-PASSWORD-LENGTH
+
+           *> check each character in the password
+           PERFORM VARYING WS-CHAR-INDEX FROM 1 BY 1
+               UNTIL WS-CHAR-INDEX > WS-PASSWORD-LENGTH
+               
+               *> check for uppercase letters
+               IF WS-USER-INPUT(WS-CHAR-INDEX:1) >= "A"
+                   AND WS-USER-INPUT(WS-CHAR-INDEX:1) <= "Z"
+                   MOVE "Y" TO WS-HAS-UPPERCASE
+               END-IF
+
+               IF WS-USER-INPUT(WS-CHAR-INDEX:1) >= "0"
+                   AND WS-USER-INPUT(WS-CHAR-INDEX:1) <= "9"
+                   MOVE "Y" TO WS-HAS-DIGIT
+               END-IF
+
+               *> check for special characters
+               IF NOT (
+                   WS-USER-INPUT(WS-CHAR-INDEX:1) >= "A"
+                   AND WS-USER-INPUT(WS-CHAR-INDEX:1) <= "Z"
+               )
+                   AND NOT (
+                       WS-USER-INPUT(WS-CHAR-INDEX:1) >= "a"
+                       AND WS-USER-INPUT(WS-CHAR-INDEX:1) <= "z"
+                   )
+                   AND NOT (
+                       WS-USER-INPUT(WS-CHAR-INDEX:1) >= "0"
+                       AND WS-USER-INPUT(WS-CHAR-INDEX:1) <= "9"
+                   )
+                   MOVE "Y" TO WS-HAS-SPECIAL
+               END-IF
+
+           END-PERFORM
+
+           *> password is valid only if every requirement passes
+           IF WS-PASSWORD-LENGTH >= 8
+               AND WS-PASSWORD-LENGTH <= 12
+               AND WS-HAS-UPPERCASE = "Y"
+               AND WS-HAS-DIGIT = "Y"
+               AND WS-HAS-SPECIAL = "Y"
+                   MOVE "Y" TO WS-PASSWORD-VALID
+           END-IF
 
            EXIT.
