@@ -14,6 +14,11 @@
            SELECT OUTPUT-FILE
                ASSIGN TO "InCollege-Output.txt"
                ORGANIZATION IS LINE SEQUENTIAL.
+           
+           *> set up persistent account storage
+           SELECT ACCOUNT-FILE
+               ASSIGN TO "accounts.txt"
+               ORGANIZATION IS LINE SEQUENTIAL.
 
        DATA DIVISION.
        FILE SECTION.
@@ -25,6 +30,12 @@
        *> stores each line written to the output file
        FD OUTPUT-FILE.
        01 OUTPUT-RECORD PIC X(100).
+       
+       *> stores account records between program runs
+       FD ACCOUNT-FILE.
+       01 ACCOUNT-RECORD.
+           05 ACCOUNT-RECORD-USERNAME PIC X(20).
+           05 ACCOUNT-RECORD-PASSWORD PIC X(12).
 
        WORKING-STORAGE SECTION.
 
@@ -35,7 +46,20 @@
        01 WS-INPUT-ENDED PIC X VALUE "N".
            88 INPUT-ENDED VALUE "Y".
            88 INPUT-AVAILABLE VALUE "N".
+       
+       
+       *> stores account information while the program runs
+       01 WS-ACCOUNTS.
+           05 WS-ACCOUNT OCCURS 5 TIMES.
+               10 WS-ACCOUNT-USERNAME PIC X(20).
+               10 WS-ACCOUNT-PASSWORD PIC X(12).
 
+       01 WS-ACCOUNT-COUNT PIC 9 VALUE 0.
+       01 WS-ACCOUNT-INDEX PIC 9 VALUE 0.
+
+       01 WS-ACCOUNT-FILE-ENDED PIC X VALUE "N".
+           88 ACCOUNT-FILE-ENDED VALUE "Y".
+           88 ACCOUNT-FILE-AVAILABLE VALUE "N".
        PROCEDURE DIVISION.
 
        MAIN-PROCEDURE.
@@ -43,6 +67,29 @@
            *> open the files for reading and writing
            OPEN INPUT INPUT-FILE
            OPEN OUTPUT OUTPUT-FILE
+           
+           *> load saved accounts
+           OPEN INPUT ACCOUNT-FILE
+           PERFORM LOAD-ACCOUNTS
+           CLOSE ACCOUNT-FILE *> close now to reopen later for writing
+
+           *> temporarily test account storage
+           *>MOVE "test" TO WS-ACCOUNT-USERNAME(1)
+           *>MOVE "Password1!" TO WS-ACCOUNT-PASSWORD(1)
+           *>MOVE 1 TO WS-ACCOUNT-COUNT
+           
+           *> temporary test for saving an account
+           *>IF WS-ACCOUNT-COUNT < 5
+           *>    ADD 1 TO WS-ACCOUNT-COUNT
+
+           *>    MOVE "testuser"
+           *>        TO WS-ACCOUNT-USERNAME(WS-ACCOUNT-COUNT)
+
+           *>    MOVE "Testpass1!"
+           *>        TO WS-ACCOUNT-PASSWORD(WS-ACCOUNT-COUNT)
+
+           *>    PERFORM SAVE-ACCOUNT
+           *>END-IF
 
            *> display the starting menu
            MOVE "Welcome to InCollege!" TO WS-MESSAGE
@@ -69,7 +116,6 @@
            CLOSE OUTPUT-FILE
 
            STOP RUN.
-
        WRITE-MESSAGE.
 
            *> display the message to the console
@@ -97,5 +143,46 @@
                    MOVE INPUT-RECORD TO WS-MESSAGE
                    PERFORM WRITE-MESSAGE
            END-READ
+
+           EXIT.
+          
+       LOAD-ACCOUNTS.
+
+           *> read each saved account into the account table
+           PERFORM UNTIL ACCOUNT-FILE-ENDED
+
+               READ ACCOUNT-FILE
+                   AT END
+                       SET ACCOUNT-FILE-ENDED TO TRUE
+
+                   NOT AT END
+                       IF WS-ACCOUNT-COUNT < 5
+                           ADD 1 TO WS-ACCOUNT-COUNT
+                           MOVE ACCOUNT-RECORD-USERNAME
+                               TO WS-ACCOUNT-USERNAME
+                                   (WS-ACCOUNT-COUNT)
+                           MOVE ACCOUNT-RECORD-PASSWORD
+                               TO WS-ACCOUNT-PASSWORD
+                                   (WS-ACCOUNT-COUNT)
+                       END-IF
+               END-READ
+
+           END-PERFORM
+
+           EXIT.
+
+       SAVE-ACCOUNT.
+
+           *> copy the new account into the file record
+           MOVE WS-ACCOUNT-USERNAME(WS-ACCOUNT-COUNT)
+               TO ACCOUNT-RECORD-USERNAME
+
+           MOVE WS-ACCOUNT-PASSWORD(WS-ACCOUNT-COUNT)
+               TO ACCOUNT-RECORD-PASSWORD
+
+           *> append the new account to persistent storage
+           OPEN EXTEND ACCOUNT-FILE
+           WRITE ACCOUNT-RECORD
+           CLOSE ACCOUNT-FILE
 
            EXIT.
