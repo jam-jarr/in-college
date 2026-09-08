@@ -76,6 +76,13 @@
        01 WS-PASSWORD-VALID PIC X VALUE "N".
            88 PASSWORD-VALID VALUE "Y".
        
+       *> values used during login
+       01 WS-LOGIN-USERNAME PIC X(20).
+       01 WS-LOGIN-PASSWORD PIC X(12).
+       01 WS-LOGIN-FOUND PIC X VALUE "N".
+           88 LOGIN-FOUND VALUE "Y".
+           88 LOGIN-NOT-FOUND VALUE "N".
+
        PROCEDURE DIVISION.
 
        MAIN-PROCEDURE.
@@ -127,8 +134,12 @@
                MOVE WS-USER-INPUT(1:1) TO WS-CHOICE
            END-IF
            
-           IF WS-CHOICE = "2"
-               PERFORM CREATE-ACCOUNT
+           IF WS-CHOICE = "1"
+               PERFORM LOGIN-USER
+           ELSE
+               IF WS-CHOICE = "2"
+                   PERFORM CREATE-ACCOUNT
+               END-IF
            END-IF
 
            *> close files before ending the program
@@ -318,5 +329,68 @@
                AND WS-HAS-SPECIAL = "Y"
                    MOVE "Y" TO WS-PASSWORD-VALID
            END-IF
+
+           EXIT.
+
+       LOGIN-USER.
+           *> continue trying until a valid account is found
+           PERFORM UNTIL LOGIN-FOUND OR INPUT-ENDED
+
+               MOVE "N" TO WS-LOGIN-FOUND
+
+               *> read the username
+               MOVE "Please enter your username:" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               PERFORM READ-USER-INPUT
+
+               IF INPUT-ENDED
+                   EXIT PERFORM
+               END-IF
+
+               MOVE WS-USER-INPUT(1:20)
+                   TO WS-LOGIN-USERNAME
+
+               *> read the password
+               MOVE "Please enter your password:" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               PERFORM READ-USER-INPUT
+
+               IF INPUT-ENDED
+                   EXIT PERFORM
+               END-IF
+
+               MOVE WS-USER-INPUT(1:12)
+                   TO WS-LOGIN-PASSWORD
+
+               *> search through every stored account
+               PERFORM VARYING WS-ACCOUNT-INDEX FROM 1 BY 1
+                   UNTIL WS-ACCOUNT-INDEX > WS-ACCOUNT-COUNT
+                   OR LOGIN-FOUND
+
+                   IF WS-LOGIN-USERNAME =
+                       WS-ACCOUNT-USERNAME(WS-ACCOUNT-INDEX)
+                       AND WS-LOGIN-PASSWORD =
+                       WS-ACCOUNT-PASSWORD(WS-ACCOUNT-INDEX)
+
+                       MOVE "Y" TO WS-LOGIN-FOUND
+                   END-IF
+
+               END-PERFORM
+
+               *> report whether the login succeeded
+               IF LOGIN-FOUND
+                   MOVE "You have successfully logged in"
+                       TO WS-MESSAGE
+                   PERFORM WRITE-MESSAGE
+               ELSE
+                   MOVE
+                       "Incorrect username/password, please try again"
+                       TO WS-MESSAGE
+                   PERFORM WRITE-MESSAGE
+               END-IF
+
+           END-PERFORM
 
            EXIT.
