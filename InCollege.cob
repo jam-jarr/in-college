@@ -37,6 +37,8 @@
            05 ACCOUNT-RECORD-USERNAME PIC X(20).
            05 ACCOUNT-RECORD-PASSWORD PIC X(12).
 
+
+
        WORKING-STORAGE SECTION.
 
        *> temporary values used while the program runs
@@ -82,6 +84,17 @@
        01 WS-LOGIN-FOUND PIC X VALUE "N".
            88 LOGIN-FOUND VALUE "Y".
            88 LOGIN-NOT-FOUND VALUE "N".
+       
+       *> controls the logged-in menu
+       01 WS-LOGOUT-SELECTED PIC X VALUE "N".
+           88 LOGOUT-SELECTED VALUE "Y".
+           88 USER-LOGGED-IN VALUE "N".
+       
+       01 WS-SKILL-BACK-SELECTED PIC X VALUE "N".
+           88 SKILL-BACK-SELECTED VALUE "Y".
+           88 STAY-IN-SKILL-MENU VALUE "N".
+
+
 
        PROCEDURE DIVISION.
 
@@ -384,12 +397,136 @@
                    MOVE "You have successfully logged in"
                        TO WS-MESSAGE
                    PERFORM WRITE-MESSAGE
+
+                   PERFORM USER-MENU
                ELSE
                    MOVE
                        "Incorrect username/password, please try again"
                        TO WS-MESSAGE
                    PERFORM WRITE-MESSAGE
                END-IF
+
+           END-PERFORM
+
+           EXIT.
+
+       USER-MENU.
+
+           MOVE "N" TO WS-LOGOUT-SELECTED
+
+           PERFORM UNTIL LOGOUT-SELECTED OR INPUT-ENDED
+
+               MOVE "1. Search for a job" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "2. Find someone you know" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "3. Learn a new skill" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "4. Logout" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "Enter your choice:" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               PERFORM READ-USER-INPUT
+
+               IF INPUT-AVAILABLE
+                   MOVE WS-USER-INPUT(1:1) TO WS-CHOICE
+               END-IF
+
+               EVALUATE WS-CHOICE
+
+                   WHEN "1"
+                       STRING
+                           "Job search/internship is "
+                           "under construction."
+                           INTO WS-MESSAGE
+                       END-STRING
+                       PERFORM WRITE-MESSAGE
+
+                   WHEN "2"
+                       STRING
+                           "Find someone you know is "
+                           "under construction."
+                           INTO WS-MESSAGE
+                       END-STRING
+                       PERFORM WRITE-MESSAGE
+
+                   WHEN "3"
+                       PERFORM SKILL-MENU
+
+                   WHEN "4"
+                       MOVE "Y" TO WS-LOGOUT-SELECTED
+
+                   WHEN OTHER
+                       MOVE "Invalid selection." TO WS-MESSAGE
+                       PERFORM WRITE-MESSAGE
+
+               END-EVALUATE
+
+           END-PERFORM
+
+           EXIT.
+
+
+              SKILL-MENU.
+
+           MOVE "N" TO WS-SKILL-BACK-SELECTED
+
+           PERFORM UNTIL SKILL-BACK-SELECTED OR INPUT-ENDED
+
+               MOVE "Learn a New Skill:" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "1. Flip Resets" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "2. Double Taps" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "3. Musty Flicks" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "4. Wizard Flicks" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "5. Zen Touch" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "6. Go Back" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               MOVE "Enter your choice:" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               PERFORM READ-USER-INPUT
+
+               IF INPUT-AVAILABLE
+                   MOVE WS-USER-INPUT(1:1) TO WS-CHOICE
+               END-IF
+
+               EVALUATE WS-CHOICE
+
+                   WHEN "1"
+                   WHEN "2"
+                   WHEN "3"
+                   WHEN "4"
+                   WHEN "5"
+                       MOVE "This skill is under construction."
+                           TO WS-MESSAGE
+                       PERFORM WRITE-MESSAGE
+
+                   WHEN "6"
+                       MOVE "Y" TO WS-SKILL-BACK-SELECTED
+
+                   WHEN OTHER
+                       MOVE "Invalid selection." TO WS-MESSAGE
+                       PERFORM WRITE-MESSAGE
+
+               END-EVALUATE
 
            END-PERFORM
 
