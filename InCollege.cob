@@ -55,6 +55,10 @@
            05 WS-ACCOUNT OCCURS 5 TIMES.
                10 WS-ACCOUNT-USERNAME PIC X(20).
                10 WS-ACCOUNT-PASSWORD PIC X(12).
+       
+       01 WS-USERNAME-EXISTS PIC X VALUE "N".
+           88 USERNAME-EXISTS VALUE "Y".
+           88 USERNAME-AVAILABLE VALUE "N".
 
        01 WS-ACCOUNT-COUNT PIC 9 VALUE 0.
        01 WS-ACCOUNT-INDEX PIC 9 VALUE 0.
@@ -249,11 +253,33 @@
            MOVE WS-ACCOUNT-COUNT TO WS-ACCOUNT-INDEX
            ADD 1 TO WS-ACCOUNT-INDEX
 
-           *> read the username
-           MOVE "Please enter your username:" TO WS-MESSAGE
-           PERFORM WRITE-MESSAGE
+           *> keep asking until a unique username is entered
+           MOVE "Y" TO WS-USERNAME-EXISTS
 
-           PERFORM READ-USER-INPUT
+           PERFORM UNTIL USERNAME-AVAILABLE OR INPUT-ENDED
+
+               MOVE "Please enter your username:" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
+               PERFORM READ-USER-INPUT
+
+               IF INPUT-ENDED
+                   EXIT PERFORM
+               END-IF
+
+               PERFORM CHECK-USERNAME
+
+               IF USERNAME-EXISTS
+                   MOVE "Username already exists, please try again."
+                       TO WS-MESSAGE
+                   PERFORM WRITE-MESSAGE
+               END-IF
+
+           END-PERFORM
+
+           IF INPUT-ENDED
+               EXIT PARAGRAPH
+           END-IF
 
            MOVE WS-USER-INPUT(1:20)
                TO WS-ACCOUNT-USERNAME(WS-ACCOUNT-INDEX)
@@ -540,6 +566,24 @@
                        PERFORM WRITE-MESSAGE
 
                END-EVALUATE
+
+           END-PERFORM
+
+           EXIT.
+
+       CHECK-USERNAME.
+
+           MOVE "N" TO WS-USERNAME-EXISTS
+
+           PERFORM VARYING WS-ACCOUNT-INDEX FROM 1 BY 1
+               UNTIL WS-ACCOUNT-INDEX > WS-ACCOUNT-COUNT
+               OR USERNAME-EXISTS
+
+               IF WS-USER-INPUT(1:20) =
+                   WS-ACCOUNT-USERNAME(WS-ACCOUNT-INDEX)
+
+                   MOVE "Y" TO WS-USERNAME-EXISTS
+               END-IF
 
            END-PERFORM
 
