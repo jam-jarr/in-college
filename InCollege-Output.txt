@@ -2,11 +2,94 @@ Welcome to InCollege!
 1. Log In
 2. Create New Account
 Enter your choice:
-2
+1
 Please enter your username:
 user
 Please enter your password:
-password1!
-Invalid password, please try again.
-Please enter your password:
-No input found.
+Password1!
+You have successfully logged in
+1. Search for a job
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+Enter your choice:
+1
+Job search/internship is under construction.
+1. Search for a job
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+Enter your choice:
+2
+Find someone you know is under construction.
+1. Search for a job
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+Enter your choice:
+3
+Learn a New Skill:
+1. Flip Resets
+2. Double Taps
+3. Musty Flicks
+4. Wizard Flicks
+5. Zen Touch
+6. Go Back
+Enter your choice:
+1
+This skill is under construction.
+Learn a New Skill:
+1. Flip Resets
+2. Double Taps
+3. Musty Flicks
+4. Wizard Flicks
+5. Zen Touch
+6. Go Back
+Enter your choice:
+2
+This skill is under construction.
+Learn a New Skill:
+1. Flip Resets
+2. Double Taps
+3. Musty Flicks
+4. Wizard Flicks
+5. Zen Touch
+6. Go Back
+Enter your choice:
+3
+This skill is under construction.
+Learn a New Skill:
+1. Flip Resets
+2. Double Taps
+3. Musty Flicks
+4. Wizard Flicks
+5. Zen Touch
+6. Go Back
+Enter your choice:
+4
+This skill is under construction.
+Learn a New Skill:
+1. Flip Resets
+2. Double Taps
+3. Musty Flicks
+4. Wizard Flicks
+5. Zen Touch
+6. Go Back
+Enter your choice:
+5
+This skill is under construction.
+Learn a New Skill:
+1. Flip Resets
+2. Double Taps
+3. Musty Flicks
+4. Wizard Flicks
+5. Zen Touch
+6. Go Back
+Enter your choice:
+6
+1. Search for a job
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+Enter your choice:
+4
