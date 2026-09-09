@@ -258,18 +258,31 @@
            MOVE WS-USER-INPUT(1:20)
                TO WS-ACCOUNT-USERNAME(WS-ACCOUNT-INDEX)
 
-           *> read the password
-           MOVE "Please enter your password:" TO WS-MESSAGE
-           PERFORM WRITE-MESSAGE
+           *> keep asking until a valid password is entered
+           MOVE "N" TO WS-PASSWORD-VALID
 
-           PERFORM READ-USER-INPUT
-           
-           PERFORM VALIDATE-PASSWORD
+           PERFORM UNTIL PASSWORD-VALID OR INPUT-ENDED
 
-           IF NOT PASSWORD-VALID
-               MOVE "Invalid password, please try again."
-                   TO WS-MESSAGE
+               MOVE "Please enter your password:" TO WS-MESSAGE
                PERFORM WRITE-MESSAGE
+
+               PERFORM READ-USER-INPUT
+
+               IF INPUT-ENDED
+                   EXIT PERFORM
+               END-IF
+
+               PERFORM VALIDATE-PASSWORD
+
+               IF NOT PASSWORD-VALID
+                   MOVE "Invalid password, please try again."
+                       TO WS-MESSAGE
+                   PERFORM WRITE-MESSAGE
+               END-IF
+
+           END-PERFORM
+
+           IF INPUT-ENDED
                EXIT PARAGRAPH
            END-IF
 
