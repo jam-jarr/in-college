@@ -1,0 +1,12 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+2
+Please enter your username:
+user
+Please enter your password:
+password1!
+Invalid password, please try again.
+Please enter your password:
+No input found.

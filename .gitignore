@@ -1,4 +1,4 @@
-# COBOL build artifacts
+# cobol build artifacts
 *.exe
 *.o
 *.obj
@@ -7,6 +7,5 @@
 # Temporary files
 *.tmp
 
-# Generated output during development
-InCollege-Output.txt
+# generated output
 InCollege
