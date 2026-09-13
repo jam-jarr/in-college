@@ -8,88 +8,84 @@ user
 Please enter your password:
 Password1!
 You have successfully logged in
-1. Search for a job
-2. Find someone you know
-3. Learn a new skill
-4. Logout
+1. Edit or create profile
+2. Search for a job
+3. Find someone you know
+4. Learn a new skill
+5. Logout
 Enter your choice:
 1
-Job search/internship is under construction.
-1. Search for a job
-2. Find someone you know
-3. Learn a new skill
-4. Logout
-Enter your choice:
-2
-Find someone you know is under construction.
-1. Search for a job
-2. Find someone you know
-3. Learn a new skill
-4. Logout
-Enter your choice:
-3
-Learn a New Skill:
-1. Flip Resets
-2. Double Taps
-3. Musty Flicks
-4. Wizard Flicks
-5. Zen Touch
-6. Go Back
-Enter your choice:
-1
-This skill is under construction.
-Learn a New Skill:
-1. Flip Resets
-2. Double Taps
-3. Musty Flicks
-4. Wizard Flicks
-5. Zen Touch
-6. Go Back
-Enter your choice:
-2
-This skill is under construction.
-Learn a New Skill:
-1. Flip Resets
-2. Double Taps
-3. Musty Flicks
-4. Wizard Flicks
-5. Zen Touch
-6. Go Back
-Enter your choice:
-3
-This skill is under construction.
-Learn a New Skill:
-1. Flip Resets
-2. Double Taps
-3. Musty Flicks
-4. Wizard Flicks
-5. Zen Touch
-6. Go Back
-Enter your choice:
-4
-This skill is under construction.
-Learn a New Skill:
-1. Flip Resets
-2. Double Taps
-3. Musty Flicks
-4. Wizard Flicks
-5. Zen Touch
-6. Go Back
+First name (Jamie):
+Jamie
+Last name (Giarratana):
+Smith
+University (USF):
+MIT
+Major (CS):
+Computer Science
+Graduation year (2026):
+2025
+Edit About Me? (y/N):
+Y
+Enter About Me text:
+I love coding and rocket league
+Edit Experience? (y/N):
+Y
+Modify experience entry 1 (Software Engineer)? (y/N/q):
+Y
+  Title:
+Software Engineer
+  Company:
+Google
+  Dates:
+2022-2024
+  Description:
+Built scalable systems
+Modify experience entry 2 (Intern)? (y/N/q):
+Y
+  Title:
+Intern
+  Company:
+Facebook
+  Dates:
+2021-2022
+  Description:
+Worked on mobile apps
+Modify experience entry 3 (contractor)? (y/N/q):
+n
+Edit Education? (y/N):
+Y
+Modify education entry 1 (BS Computer Science)? (y/N/q):
+Y
+  Degree:
+BS Computer Science
+  University:
+MIT
+  Years attended:
+2021-2025
+Add education entry 2? (y/N):
+n
+=== Profile Preview ===
+Name: Jamie Smith
+University: MIT | Major: Computer Science | Graduation: 2025
+About Me: I love coding and rocket league
+Experience:
+  1. Software Engineer at Google (2022-2024)
+     Built scalable systems
+  2. Intern at Facebook (2021-2022)
+     Worked on mobile apps
+  3. contractor at rock and stone (2020-2021)
+     it was fun
+Education:
+  1. BS Computer Science, MIT (2021-2025)
+=======================
+Save profile? (y/N):
+Y
+Profile saved.
+1. Edit or create profile
+2. Search for a job
+3. Find someone you know
+4. Learn a new skill
+5. Logout
 Enter your choice:
 5
-This skill is under construction.
-Learn a New Skill:
-1. Flip Resets
-2. Double Taps
-3. Musty Flicks
-4. Wizard Flicks
-5. Zen Touch
-6. Go Back
-Enter your choice:
-6
-1. Search for a job
-2. Find someone you know
-3. Learn a new skill
-4. Logout
-Enter your choice:
-4
