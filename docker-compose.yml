@@ -1,0 +1,10 @@
+services:
+  cobol:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    tty: true
+    stdin_open: true
+    command: bash -c "cobc -x -o InCollege InCollege.cob && exec bash"
