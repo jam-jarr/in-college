@@ -543,16 +543,19 @@
                 MOVE "1. Edit or create profile" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "2. Search for a job" TO WS-MESSAGE
+                MOVE "2. View my profile" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "3. Find someone you know" TO WS-MESSAGE
+                MOVE "3. Search for a job" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "4. Learn a new skill" TO WS-MESSAGE
+                MOVE "4. Find someone you know" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "5. Logout" TO WS-MESSAGE
+                MOVE "5. Learn a new skill" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "6. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
                 MOVE "Enter your choice:" TO WS-MESSAGE
@@ -570,6 +573,9 @@
                         PERFORM EDIT-PROFILE
 
                     WHEN "2"
+                        PERFORM VIEW-PROFILE
+
+                    WHEN "3"
                         STRING
                             "Job search/internship is "
                             "under construction."
@@ -577,7 +583,7 @@
                         END-STRING
                         PERFORM WRITE-MESSAGE
 
-                    WHEN "3"
+                    WHEN "4"
                         STRING
                             "Find someone you know is "
                             "under construction."
@@ -585,10 +591,10 @@
                         END-STRING
                         PERFORM WRITE-MESSAGE
 
-                    WHEN "4"
+                    WHEN "5"
                         PERFORM SKILL-MENU
 
-                    WHEN "5"
+                    WHEN "6"
                         MOVE "Y" TO WS-LOGOUT-SELECTED
 
                     WHEN OTHER
@@ -790,6 +796,35 @@
             END-PERFORM
             CLOSE PROFILE-FILE
             EXIT.
+
+        VIEW-PROFILE.
+            *> find existing profile for current logged-in user
+            SET PROFILE-NOT-FOUND TO TRUE
+            MOVE 0 TO WS-CURRENT-PROFILE-INDEX
+
+            PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
+                UNTIL WS-PROFILE-INDEX > WS-PROFILE-COUNT
+                OR PROFILE-FOUND
+
+                IF WS-PROF-USERNAME(WS-PROFILE-INDEX) =
+                    WS-LOGIN-USERNAME
+
+                    SET PROFILE-FOUND TO TRUE
+                    MOVE WS-PROFILE-INDEX
+                        TO WS-CURRENT-PROFILE-INDEX
+                END-IF
+            END-PERFORM
+
+            IF PROFILE-FOUND
+                PERFORM DISPLAY-PROFILE
+            ELSE
+                MOVE "No profile found. Please create a profile first."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+            END-IF
+
+            EXIT.
+
 
         EDIT-PROFILE.
 
