@@ -165,6 +165,17 @@
 
         01 WS-TEMP-CHOICE PIC X.
         01 WS-EDIT-INDEX PIC 9.
+
+        01 WS-GRAD-YEAR-VALID PIC X VALUE "N".
+            88 GRAD-YEAR-VALID VALUE "Y".
+            88 GRAD-YEAR-INVALID VALUE "N".
+
+        01 WS-GRAD-YEAR-NUM PIC 9(4).
+
+        01 WS-REQUIRED-FIELD-VALID PIC X VALUE "N".
+            88 REQUIRED-FIELD-VALID VALUE "Y".
+            88 REQUIRED-FIELD-INVALID VALUE "N".
+
         01 WS-SAVE-PROFILE PIC X VALUE "N".
             88 SAVE-PROFILE VALUE "Y".
             88 DISCARD-PROFILE VALUE "N".
@@ -543,16 +554,19 @@
                 MOVE "1. Edit or create profile" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "2. Search for a job" TO WS-MESSAGE
+                MOVE "2. View my profile" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "3. Find someone you know" TO WS-MESSAGE
+                MOVE "3. Search for a job" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "4. Learn a new skill" TO WS-MESSAGE
+                MOVE "4. Find someone you know" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "5. Logout" TO WS-MESSAGE
+                MOVE "5. Learn a new skill" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "6. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
                 MOVE "Enter your choice:" TO WS-MESSAGE
@@ -570,6 +584,9 @@
                         PERFORM EDIT-PROFILE
 
                     WHEN "2"
+                        PERFORM VIEW-PROFILE
+
+                    WHEN "3"
                         STRING
                             "Job search/internship is "
                             "under construction."
@@ -577,7 +594,7 @@
                         END-STRING
                         PERFORM WRITE-MESSAGE
 
-                    WHEN "3"
+                    WHEN "4"
                         STRING
                             "Find someone you know is "
                             "under construction."
@@ -585,10 +602,10 @@
                         END-STRING
                         PERFORM WRITE-MESSAGE
 
-                    WHEN "4"
+                    WHEN "5"
                         PERFORM SKILL-MENU
 
-                    WHEN "5"
+                    WHEN "6"
                         MOVE "Y" TO WS-LOGOUT-SELECTED
 
                     WHEN OTHER
@@ -791,6 +808,35 @@
             CLOSE PROFILE-FILE
             EXIT.
 
+        VIEW-PROFILE.
+            *> find existing profile for current logged-in user
+            SET PROFILE-NOT-FOUND TO TRUE
+            MOVE 0 TO WS-CURRENT-PROFILE-INDEX
+
+            PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
+                UNTIL WS-PROFILE-INDEX > WS-PROFILE-COUNT
+                OR PROFILE-FOUND
+
+                IF WS-PROF-USERNAME(WS-PROFILE-INDEX) =
+                    WS-LOGIN-USERNAME
+
+                    SET PROFILE-FOUND TO TRUE
+                    MOVE WS-PROFILE-INDEX
+                        TO WS-CURRENT-PROFILE-INDEX
+                END-IF
+            END-PERFORM
+
+            IF PROFILE-FOUND
+                PERFORM DISPLAY-PROFILE
+            ELSE
+                MOVE "No profile found. Please create a profile first."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+            END-IF
+
+            EXIT.
+
+
         EDIT-PROFILE.
 
             *> find existing profile for current user
@@ -882,99 +928,261 @@
         EDIT-REQUIRED-FIELDS.
 
             *> First Name
-            IF WS-PROF-FIRST-NAME(WS-CURRENT-PROFILE-INDEX) NOT = SPACES
-                STRING
-                    "First name ("
-                    FUNCTION TRIM(WS-PROF-FIRST-NAME(
-                        WS-CURRENT-PROFILE-INDEX))
-                    "): "
-                    INTO WS-MESSAGE
-                END-STRING
-            ELSE
-                MOVE "First name: " TO WS-MESSAGE
-            END-IF
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE AND WS-USER-INPUT NOT = SPACES
-                MOVE WS-USER-INPUT(1:20)
-                    TO WS-PROF-FIRST-NAME(WS-CURRENT-PROFILE-INDEX)
-            END-IF
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+
+                IF WS-PROF-FIRST-NAME(
+                    WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                    STRING
+                        "First name ("
+                        FUNCTION TRIM(WS-PROF-FIRST-NAME(
+                            WS-CURRENT-PROFILE-INDEX))
+                        "): "
+                        INTO WS-MESSAGE
+                    END-STRING
+                ELSE
+                    MOVE "First name: " TO WS-MESSAGE
+                END-IF
+
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-PROF-FIRST-NAME(
+                        WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                        *> blank keeps existing value when editing
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "First name is required."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:20)
+                        TO WS-PROF-FIRST-NAME(
+                            WS-CURRENT-PROFILE-INDEX)
+
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+
+            END-PERFORM
 
             *> Last Name
-            IF WS-PROF-LAST-NAME(WS-CURRENT-PROFILE-INDEX) NOT = SPACES
-                STRING
-                    "Last name ("
-                    FUNCTION TRIM(WS-PROF-LAST-NAME(
-                        WS-CURRENT-PROFILE-INDEX))
-                    "): "
-                    INTO WS-MESSAGE
-                END-STRING
-            ELSE
-                MOVE "Last name: " TO WS-MESSAGE
-            END-IF
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE AND WS-USER-INPUT NOT = SPACES
-                MOVE WS-USER-INPUT(1:20)
-                    TO WS-PROF-LAST-NAME(WS-CURRENT-PROFILE-INDEX)
-            END-IF
+            SET REQUIRED-FIELD-INVALID TO TRUE
 
-            *> University
-            IF WS-PROF-UNIVERSITY(WS-CURRENT-PROFILE-INDEX) NOT = SPACES
-                STRING
-                    "University ("
-                    FUNCTION TRIM(WS-PROF-UNIVERSITY(
-                        WS-CURRENT-PROFILE-INDEX))
-                    "): "
-                    INTO WS-MESSAGE
-                END-STRING
-            ELSE
-                MOVE "University: " TO WS-MESSAGE
-            END-IF
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE AND WS-USER-INPUT NOT = SPACES
-                MOVE WS-USER-INPUT(1:30)
-                    TO WS-PROF-UNIVERSITY(WS-CURRENT-PROFILE-INDEX)
-            END-IF
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+
+                IF WS-PROF-LAST-NAME(
+                    WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                    STRING
+                        "Last name ("
+                        FUNCTION TRIM(WS-PROF-LAST-NAME(
+                            WS-CURRENT-PROFILE-INDEX))
+                        "): "
+                        INTO WS-MESSAGE
+                    END-STRING
+                ELSE
+                    MOVE "Last name: " TO WS-MESSAGE
+                END-IF
+
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-PROF-LAST-NAME(
+                        WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                        *> blank keeps existing value when editing
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "Last name is required."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:20)
+                        TO WS-PROF-LAST-NAME(
+                            WS-CURRENT-PROFILE-INDEX)
+
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+
+            END-PERFORM
+
+            *> University/College
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+
+                IF WS-PROF-UNIVERSITY(
+                    WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                    STRING
+                        "University/College ("
+                        FUNCTION TRIM(WS-PROF-UNIVERSITY(
+                            WS-CURRENT-PROFILE-INDEX))
+                        "): "
+                        INTO WS-MESSAGE
+                    END-STRING
+                ELSE
+                    MOVE "University/College: " TO WS-MESSAGE
+                END-IF
+
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-PROF-UNIVERSITY(
+                        WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                        *> blank keeps existing value when editing
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "University/College is required."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:50)
+                        TO WS-PROF-UNIVERSITY(
+                            WS-CURRENT-PROFILE-INDEX)
+
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+
+            END-PERFORM
 
             *> Major
-            IF WS-PROF-MAJOR(WS-CURRENT-PROFILE-INDEX) NOT = SPACES
-                STRING
-                    "Major ("
-                    FUNCTION TRIM(WS-PROF-MAJOR(WS-CURRENT-PROFILE-INDEX))
-                    "): "
-                    INTO WS-MESSAGE
-                END-STRING
-            ELSE
-                MOVE "Major: " TO WS-MESSAGE
-            END-IF
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE AND WS-USER-INPUT NOT = SPACES
-                MOVE WS-USER-INPUT(1:30)
-                    TO WS-PROF-MAJOR(WS-CURRENT-PROFILE-INDEX)
-            END-IF
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+
+                IF WS-PROF-MAJOR(
+                    WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                    STRING
+                        "Major ("
+                        FUNCTION TRIM(WS-PROF-MAJOR(
+                            WS-CURRENT-PROFILE-INDEX))
+                        "): "
+                        INTO WS-MESSAGE
+                    END-STRING
+                ELSE
+                    MOVE "Major: " TO WS-MESSAGE
+                END-IF
+
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-PROF-MAJOR(
+                        WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                        *> blank keeps existing value when editing
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "Major is required."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:50)
+                        TO WS-PROF-MAJOR(
+                            WS-CURRENT-PROFILE-INDEX)
+
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+
+            END-PERFORM
 
             *> Graduation Year
-            IF WS-PROF-GRAD-YEAR(WS-CURRENT-PROFILE-INDEX) NOT = SPACES
-                STRING
-                    "Graduation year ("
-                    FUNCTION TRIM(WS-PROF-GRAD-YEAR(
-                        WS-CURRENT-PROFILE-INDEX))
-                    "): "
-                    INTO WS-MESSAGE
-                END-STRING
-            ELSE
-                MOVE "Graduation year: " TO WS-MESSAGE
-            END-IF
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE AND WS-USER-INPUT NOT = SPACES
-                MOVE WS-USER-INPUT(1:4)
-                    TO WS-PROF-GRAD-YEAR(WS-CURRENT-PROFILE-INDEX)
-            END-IF
+            SET GRAD-YEAR-INVALID TO TRUE
 
+            PERFORM UNTIL GRAD-YEAR-VALID OR INPUT-ENDED
+
+                IF WS-PROF-GRAD-YEAR(
+                    WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                    STRING
+                        "Graduation year ("
+                        FUNCTION TRIM(WS-PROF-GRAD-YEAR(
+                            WS-CURRENT-PROFILE-INDEX))
+                        "): "
+                        INTO WS-MESSAGE
+                    END-STRING
+                ELSE
+                    MOVE "Graduation year: " TO WS-MESSAGE
+                END-IF
+
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-PROF-GRAD-YEAR(
+                        WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                        *> blank keeps the existing year when editing
+                        SET GRAD-YEAR-VALID TO TRUE
+                    ELSE
+                        MOVE
+                            "Graduation year is required."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    IF WS-USER-INPUT(1:4) IS NUMERIC
+                        AND WS-USER-INPUT(5:496) = SPACES
+
+                        MOVE WS-USER-INPUT(1:4)
+                            TO WS-GRAD-YEAR-NUM
+
+                        IF WS-GRAD-YEAR-NUM > 2025
+                            AND WS-GRAD-YEAR-NUM < 2034
+
+                            MOVE WS-USER-INPUT(1:4)
+                                TO WS-PROF-GRAD-YEAR(
+                                    WS-CURRENT-PROFILE-INDEX)
+
+                            SET GRAD-YEAR-VALID TO TRUE
+                        ELSE
+                            MOVE
+                                "Graduation year must be 2026-2033."
+                                TO WS-MESSAGE
+                            PERFORM WRITE-MESSAGE
+                        END-IF
+                    ELSE
+                        MOVE
+                            "Graduation year must be a 4-digit number."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                END-IF
+
+            END-PERFORM
             EXIT.
 
         EDIT-OPTIONAL-SECTIONS.
