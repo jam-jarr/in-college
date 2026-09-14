@@ -165,6 +165,15 @@
 
         01 WS-TEMP-CHOICE PIC X.
         01 WS-EDIT-INDEX PIC 9.
+
+        01 WS-GRAD-YEAR-VALID PIC X VALUE "N".
+            88 GRAD-YEAR-VALID VALUE "Y".
+            88 GRAD-YEAR-INVALID VALUE "N".
+
+        01 WS-GRAD-YEAR-NUM PIC 9(4).
+
+
+        
         01 WS-SAVE-PROFILE PIC X VALUE "N".
             88 SAVE-PROFILE VALUE "Y".
             88 DISCARD-PROFILE VALUE "N".
@@ -991,25 +1000,74 @@
                     TO WS-PROF-MAJOR(WS-CURRENT-PROFILE-INDEX)
             END-IF
 
-            *> Graduation Year
-            IF WS-PROF-GRAD-YEAR(WS-CURRENT-PROFILE-INDEX) NOT = SPACES
-                STRING
-                    "Graduation year ("
-                    FUNCTION TRIM(WS-PROF-GRAD-YEAR(
-                        WS-CURRENT-PROFILE-INDEX))
-                    "): "
-                    INTO WS-MESSAGE
-                END-STRING
-            ELSE
-                MOVE "Graduation year: " TO WS-MESSAGE
-            END-IF
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE AND WS-USER-INPUT NOT = SPACES
-                MOVE WS-USER-INPUT(1:4)
-                    TO WS-PROF-GRAD-YEAR(WS-CURRENT-PROFILE-INDEX)
-            END-IF
+                       *> Graduation Year
+            SET GRAD-YEAR-INVALID TO TRUE
 
+            PERFORM UNTIL GRAD-YEAR-VALID OR INPUT-ENDED
+
+                IF WS-PROF-GRAD-YEAR(
+                    WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                    STRING
+                        "Graduation year ("
+                        FUNCTION TRIM(WS-PROF-GRAD-YEAR(
+                            WS-CURRENT-PROFILE-INDEX))
+                        "): "
+                        INTO WS-MESSAGE
+                    END-STRING
+                ELSE
+                    MOVE "Graduation year: " TO WS-MESSAGE
+                END-IF
+
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-PROF-GRAD-YEAR(
+                        WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+
+                        *> blank keeps the existing year when editing
+                        SET GRAD-YEAR-VALID TO TRUE
+                    ELSE
+                        MOVE
+                            "Graduation year is required."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    IF WS-USER-INPUT(1:4) IS NUMERIC
+                        AND WS-USER-INPUT(5:496) = SPACES
+
+                        MOVE WS-USER-INPUT(1:4)
+                            TO WS-GRAD-YEAR-NUM
+
+                        IF WS-GRAD-YEAR-NUM > 2025
+                            AND WS-GRAD-YEAR-NUM < 2034
+
+                            MOVE WS-USER-INPUT(1:4)
+                                TO WS-PROF-GRAD-YEAR(
+                                    WS-CURRENT-PROFILE-INDEX)
+
+                            SET GRAD-YEAR-VALID TO TRUE
+                        ELSE
+                            MOVE
+                                "Graduation year must be 2026-2033."
+                                TO WS-MESSAGE
+                            PERFORM WRITE-MESSAGE
+                        END-IF
+                    ELSE
+                        MOVE
+                            "Graduation year must be a 4-digit number."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                END-IF
+
+            END-PERFORM
             EXIT.
 
         EDIT-OPTIONAL-SECTIONS.
