@@ -1,0 +1,52 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+testeraccount
+Please enter your password:
+Password1!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+1
+First name (Cameron):
+
+Last name (Goz):
+
+University/College (USF):
+
+Major (CS):
+
+Graduation year (2026):
+
+Edit About Me? (y/N):
+Y
+Enter About Me text:
+This About Me entry is intentionally long in order to test and verify whether the full text is displ
+Edit Experience? (y/N):
+N
+Edit Education? (y/N):
+N
+=== Profile Preview ===
+Name: Cameron Goz
+University: USF | Major: CS | Graduation: 2026
+About Me: This About Me entry is intentionally long in order to test and verify whether the full tex
+=======================
+Save profile? (y/N):
+N
+Changes discarded.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+6

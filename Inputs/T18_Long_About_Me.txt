@@ -1,0 +1,15 @@
+1
+testeraccount
+Password1!
+1
+
+
+
+
+
+Y
+This About Me entry is intentionally long in order to test and verify whether the full text is displayed and preserved correctly in both the console output and the output file without being cut off unexpectedly
+N
+N
+N
+6
