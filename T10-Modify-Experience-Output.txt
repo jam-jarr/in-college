@@ -1,0 +1,99 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+testuser2
+Please enter your password:
+Password2!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+1
+First name (John):
+
+Last name (Smith):
+
+University/College (University of South Florida):
+
+Major (Computer Science):
+
+Graduation year (2028):
+
+Edit About Me? (y/N):
+N
+Edit Experience? (y/N):
+Y
+Modify experience entry 1 (Software Engineer)? (y/N/q):
+Y
+  Title:
+Senior Software Engineer
+  Company:
+Apple
+  Dates:
+2026-Present
+  Description:
+Developed production software
+Modify experience entry 2 (Software Intern)? (y/N/q):
+N
+Modify experience entry 3 (IT Intern)? (y/N/q):
+N
+Edit Education? (y/N):
+N
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+About Me: I am a Computer Science student interested in software engineering.
+Experience:
+  1. Senior Software Engineer at Apple (2026-Present)
+     Developed production software
+  2. Software Intern at Microsoft (2024-2025)
+     Tested software systems
+  3. IT Intern at Amazon (2023-2024)
+     Provided technical support
+Education:
+  1. BS Computer Science, University of South Florida (2024-2028)
+  2. AA Computer Science, Hillsborough Community College (2022-2024)
+  3. High School Diploma, Tampa High School (2018-2022)
+=======================
+Save profile? (y/N):
+Y
+Profile saved.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+2
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+About Me: I am a Computer Science student interested in software engineering.
+Experience:
+  1. Senior Software Engineer at Apple (2026-Present)
+     Developed production software
+  2. Software Intern at Microsoft (2024-2025)
+     Tested software systems
+  3. IT Intern at Amazon (2023-2024)
+     Provided technical support
+Education:
+  1. BS Computer Science, University of South Florida (2024-2028)
+  2. AA Computer Science, Hillsborough Community College (2022-2024)
+  3. High School Diploma, Tampa High School (2018-2022)
+=======================
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+6

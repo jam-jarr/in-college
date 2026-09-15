@@ -1,0 +1,107 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+testuser2
+Please enter your password:
+Password2!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+1
+First name (John):
+
+Last name (Smith):
+
+University/College (University of South Florida):
+
+Major (Computer Science):
+
+Graduation year (2028):
+
+Edit About Me? (y/N):
+N
+Edit Experience? (y/N):
+Y
+Add experience entry 1? (y/N):
+Y
+  Title:
+Software Engineer
+  Company:
+Google
+  Dates:
+2025-2026
+  Description:
+Developed web applications
+Add experience entry 2? (y/N):
+Y
+  Title:
+Software Intern
+  Company:
+Microsoft
+  Dates:
+2024-2025
+  Description:
+Tested software systems
+Add experience entry 3? (y/N):
+Y
+  Title:
+IT Intern
+  Company:
+Amazon
+  Dates:
+2023-2024
+  Description:
+Provided technical support
+Edit Education? (y/N):
+N
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+About Me: I am a Computer Science student interested in software engineering.
+Experience:
+  1. Software Engineer at Google (2025-2026)
+     Developed web applications
+  2. Software Intern at Microsoft (2024-2025)
+     Tested software systems
+  3. IT Intern at Amazon (2023-2024)
+     Provided technical support
+=======================
+Save profile? (y/N):
+Y
+Profile saved.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+2
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+About Me: I am a Computer Science student interested in software engineering.
+Experience:
+  1. Software Engineer at Google (2025-2026)
+     Developed web applications
+  2. Software Intern at Microsoft (2024-2025)
+     Tested software systems
+  3. IT Intern at Amazon (2023-2024)
+     Provided technical support
+=======================
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+6

@@ -1,0 +1,27 @@
+1
+testuser2
+Password2!
+1
+
+
+
+
+
+N
+N
+Y
+Y
+BS Computer Science
+University of South Florida
+2024-2028
+Y
+AA Computer Science
+Hillsborough Community College
+2022-2024
+Y
+High School Diploma
+Tampa High School
+2018-2022
+Y
+2
+6

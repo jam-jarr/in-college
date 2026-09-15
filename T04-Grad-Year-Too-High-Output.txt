@@ -1,0 +1,62 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+user
+Please enter your password:
+Password1!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+1
+First name (Mahmoud):
+Mahmoud
+Last name (Hasan):
+Hasan
+University/College (University of South Florida):
+University of South Florida
+Major (Computer Science): a
+Computer Science
+Graduation year (2028):
+2034
+Graduation year must be 2026-2033.
+Graduation year (2028): 2026-2033.
+2033
+Edit About Me? (y/N):
+N
+Edit Experience? (y/N):
+N
+Edit Education? (y/N):
+N
+=== Profile Preview ===
+Name: Mahmoud Hasan
+University: University of South Florida | Major: Computer Science | Graduation: 2033
+About Me: I love coding and rocket league
+Experience:
+  1. Software Engineer at Google (2022-2024)
+     Built scalable systems
+  2. Intern at Facebook (2021-2022)
+     Worked on mobile apps
+  3. contractor at rock and stone (2020-2021)
+     it was fun
+Education:
+  1. BS Computer Science, MIT (2021-2025)
+=======================
+Save profile? (y/N):
+N
+Changes discarded.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+6

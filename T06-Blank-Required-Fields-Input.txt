@@ -1,0 +1,19 @@
+1
+testuser2
+Password2!
+1
+
+John
+
+Smith
+
+University of South Florida
+
+Computer Science
+2028
+N
+N
+N
+Y
+2
+6

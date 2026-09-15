@@ -1,0 +1,73 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+testuser2
+Please enter your password:
+Password2!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+1
+First name:
+
+First name is required.
+First name:
+John
+Last name:
+
+Last name is required.
+Last name:
+Smith
+University/College:
+
+University/College is required.
+University/College:
+University of South Florida
+Major:
+
+Major is required.
+Major:
+Computer Science
+Graduation year:
+2028
+Edit About Me? (y/N):
+N
+Edit Experience? (y/N):
+N
+Edit Education? (y/N):
+N
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+=======================
+Save profile? (y/N):
+Y
+Profile saved.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+2
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+=======================
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+6

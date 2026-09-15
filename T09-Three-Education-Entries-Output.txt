@@ -1,0 +1,109 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+testuser2
+Please enter your password:
+Password2!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+1
+First name (John):
+
+Last name (Smith):
+
+University/College (University of South Florida):
+
+Major (Computer Science):
+
+Graduation year (2028):
+
+Edit About Me? (y/N):
+N
+Edit Experience? (y/N):
+N
+Edit Education? (y/N):
+Y
+Add education entry 1? (y/N):
+Y
+  Degree:
+BS Computer Science
+  University:
+University of South Florida
+  Years attended:
+2024-2028
+Add education entry 2? (y/N):
+Y
+  Degree:
+AA Computer Science
+  University:
+Hillsborough Community College
+  Years attended:
+2022-2024
+Add education entry 3? (y/N):
+Y
+  Degree:
+High School Diploma
+  University:
+Tampa High School
+  Years attended:
+2018-2022
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+About Me: I am a Computer Science student interested in software engineering.
+Experience:
+  1. Software Engineer at Google (2025-2026)
+     Developed web applications
+  2. Software Intern at Microsoft (2024-2025)
+     Tested software systems
+  3. IT Intern at Amazon (2023-2024)
+     Provided technical support
+Education:
+  1. BS Computer Science, University of South Florida (2024-2028)
+  2. AA Computer Science, Hillsborough Community College (2022-2024)
+  3. High School Diploma, Tampa High School (2018-2022)
+=======================
+Save profile? (y/N):
+Y
+Profile saved.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+2
+=== Profile Preview ===
+Name: John Smith
+University: University of South Florida | Major: Computer Science | Graduation: 2028
+About Me: I am a Computer Science student interested in software engineering.
+Experience:
+  1. Software Engineer at Google (2025-2026)
+     Developed web applications
+  2. Software Intern at Microsoft (2024-2025)
+     Tested software systems
+  3. IT Intern at Amazon (2023-2024)
+     Provided technical support
+Education:
+  1. BS Computer Science, University of South Florida (2024-2028)
+  2. AA Computer Science, Hillsborough Community College (2022-2024)
+  3. High School Diploma, Tampa High School (2018-2022)
+=======================
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+6

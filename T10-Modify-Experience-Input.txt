@@ -1,0 +1,22 @@
+1
+testuser2
+Password2!
+1
+
+
+
+
+
+N
+Y
+Y
+Senior Software Engineer
+Apple
+2026-Present
+Developed production software
+N
+N
+N
+Y
+2
+6
