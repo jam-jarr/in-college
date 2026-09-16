@@ -172,9 +172,13 @@
 
         01 WS-GRAD-YEAR-NUM PIC 9(4).
 
+        01 WS-INPUT-LENGTH PIC 9(3) VALUE 0.
+
         01 WS-REQUIRED-FIELD-VALID PIC X VALUE "N".
             88 REQUIRED-FIELD-VALID VALUE "Y".
             88 REQUIRED-FIELD-INVALID VALUE "N".
+       
+
 
         01 WS-SAVE-PROFILE PIC X VALUE "N".
             88 SAVE-PROFILE VALUE "Y".
@@ -1188,22 +1192,37 @@
         EDIT-OPTIONAL-SECTIONS.
 
             *> About Me
-            MOVE "Edit About Me? (y/N):" TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:1) TO WS-TEMP-CHOICE
-                IF WS-TEMP-CHOICE = 'Y' OR WS-TEMP-CHOICE = 'y'
-                    MOVE "Enter About Me text:" TO WS-MESSAGE
-                    PERFORM WRITE-MESSAGE
-                    PERFORM READ-USER-INPUT
-                    IF INPUT-AVAILABLE
-                        MOVE WS-USER-INPUT(1:500)
-                            TO WS-PROF-ABOUT-ME(
-                                WS-CURRENT-PROFILE-INDEX)
-                    END-IF
-                END-IF
-            END-IF
+                    SET REQUIRED-FIELD-INVALID TO TRUE
+
+                    PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+
+                        MOVE
+                            "Enter About Me (optional, max 200 chars):"
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                        PERFORM READ-USER-INPUT
+
+                        IF INPUT-ENDED
+                            EXIT PERFORM
+                        END-IF
+
+                        MOVE FUNCTION LENGTH(
+                            FUNCTION TRIM(WS-USER-INPUT))
+                            TO WS-INPUT-LENGTH
+
+                        IF WS-INPUT-LENGTH <= 200
+                            MOVE WS-USER-INPUT(1:200)
+                                TO WS-PROF-ABOUT-ME(
+                                    WS-CURRENT-PROFILE-INDEX)
+                            SET REQUIRED-FIELD-VALID TO TRUE
+                        ELSE
+                            MOVE
+                                "About Me must be 200 characters or less."
+                                TO WS-MESSAGE
+                            PERFORM WRITE-MESSAGE
+                        END-IF
+
+                    END-PERFORM
 
             *> Experience
             SET SECTION-CONTINUE TO TRUE
@@ -1308,43 +1327,133 @@
 
         EDIT-EXPERIENCE-ENTRY.
 
-            MOVE "  Title: " TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:30)
-                    TO WS-EXP-TITLE(WS-CURRENT-PROFILE-INDEX,
-                        WS-EDIT-INDEX)
-            END-IF
+            *> Title - required
+            SET REQUIRED-FIELD-INVALID TO TRUE
 
-            MOVE "  Company: " TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:30)
-                    TO WS-EXP-COMPANY(WS-CURRENT-PROFILE-INDEX,
-                        WS-EDIT-INDEX)
-            END-IF
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+                MOVE "  Title: " TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
 
-            MOVE "  Dates: " TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:20)
-                    TO WS-EXP-DATES(WS-CURRENT-PROFILE-INDEX,
-                        WS-EDIT-INDEX)
-            END-IF
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
 
-            MOVE "  Description: " TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:200)
-                    TO WS-EXP-DESCRIPTION(WS-CURRENT-PROFILE-INDEX,
-                        WS-EDIT-INDEX)
-            END-IF
+                IF WS-USER-INPUT = SPACES
+                    IF WS-EXP-TITLE(
+                        WS-CURRENT-PROFILE-INDEX,
+                        WS-EDIT-INDEX) NOT = SPACES
+
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "Title is required." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:30)
+                        TO WS-EXP-TITLE(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX)
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+            END-PERFORM
+
+            *> Company - required
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+                MOVE "  Company: " TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-EXP-COMPANY(
+                        WS-CURRENT-PROFILE-INDEX,
+                        WS-EDIT-INDEX) NOT = SPACES
+
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "Company is required." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:30)
+                        TO WS-EXP-COMPANY(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX)
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+            END-PERFORM
+
+            *> Dates - required
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+                MOVE "  Dates: " TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-EXP-DATES(
+                        WS-CURRENT-PROFILE-INDEX,
+                        WS-EDIT-INDEX) NOT = SPACES
+
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "Dates are required." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:20)
+                        TO WS-EXP-DATES(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX)
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+            END-PERFORM
+
+            *> Description - optional, max 100 characters
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+                MOVE
+                    "  Description (optional, max 100 chars): "
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                MOVE FUNCTION LENGTH(
+                    FUNCTION TRIM(WS-USER-INPUT))
+                    TO WS-INPUT-LENGTH
+
+                IF WS-INPUT-LENGTH <= 100
+                    MOVE WS-USER-INPUT(1:100)
+                        TO WS-EXP-DESCRIPTION(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX)
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                ELSE
+                    MOVE
+                        "Description must be 100 characters or less."
+                        TO WS-MESSAGE
+                    PERFORM WRITE-MESSAGE
+                END-IF
+            END-PERFORM
 
             EXIT.
+
 
         EDIT-EDUCATION.
 
@@ -1425,32 +1534,99 @@
 
         EDIT-EDUCATION-ENTRY.
 
-            MOVE "  Degree: " TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:30)
-                    TO WS-EDU-DEGREE(WS-CURRENT-PROFILE-INDEX,
-                        WS-EDIT-INDEX)
-            END-IF
+            *> Degree - required
+            SET REQUIRED-FIELD-INVALID TO TRUE
 
-            MOVE "  University: " TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:30)
-                    TO WS-EDU-UNIVERSITY(WS-CURRENT-PROFILE-INDEX,
-                        WS-EDIT-INDEX)
-            END-IF
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+                MOVE "  Degree: " TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
 
-            MOVE "  Years attended: " TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-            PERFORM READ-USER-INPUT
-            IF INPUT-AVAILABLE
-                MOVE WS-USER-INPUT(1:10)
-                    TO WS-EDU-YEARS(WS-CURRENT-PROFILE-INDEX,
-                        WS-EDIT-INDEX)
-            END-IF
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-EDU-DEGREE(
+                        WS-CURRENT-PROFILE-INDEX,
+                        WS-EDIT-INDEX) NOT = SPACES
+
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "Degree is required." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:30)
+                        TO WS-EDU-DEGREE(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX)
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+            END-PERFORM
+
+            *> University - required
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+                MOVE "  University: " TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-EDU-UNIVERSITY(
+                        WS-CURRENT-PROFILE-INDEX,
+                        WS-EDIT-INDEX) NOT = SPACES
+
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "University is required." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:30)
+                        TO WS-EDU-UNIVERSITY(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX)
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+            END-PERFORM
+
+            *> Years attended - required
+            SET REQUIRED-FIELD-INVALID TO TRUE
+
+            PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
+                MOVE "  Years attended: " TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                IF WS-USER-INPUT = SPACES
+                    IF WS-EDU-YEARS(
+                        WS-CURRENT-PROFILE-INDEX,
+                        WS-EDIT-INDEX) NOT = SPACES
+
+                        SET REQUIRED-FIELD-VALID TO TRUE
+                    ELSE
+                        MOVE "Years attended is required."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                ELSE
+                    MOVE WS-USER-INPUT(1:10)
+                        TO WS-EDU-YEARS(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX)
+                    SET REQUIRED-FIELD-VALID TO TRUE
+                END-IF
+            END-PERFORM
 
             EXIT.
 
