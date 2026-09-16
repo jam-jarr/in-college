@@ -14,6 +14,7 @@ software
 corporation
 Fall 2026
 This experience entry is intentionally long in order to test and verify whether the full text is displayed and preserved correctly in both the console output and the output file without being cut off unexpectedly
+Functional description
 N
 N
 N

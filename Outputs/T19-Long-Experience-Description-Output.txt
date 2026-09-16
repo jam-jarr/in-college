@@ -38,18 +38,22 @@ software
 corporation
   Dates:
 Fall 2026
-  Description:
+  Description (optional, max 100 chars):
 This experience entry is intentionally long in order to test and verify whether the full text is dis
-Add experience entry 2? (y/N):tionally long in order to test and verify whether the full text is dis
+Description must be 100 characters or less.
+  Description (optional, max 100 chars):
+Functional description
+Add experience entry 2? (y/N):
 N
 Edit Education? (y/N):
 N
 === Profile Preview ===
 Name: Cameron Goz
 University: USF | Major: CS | Graduation: 2026
+About Me: A
 Experience:
   1. software at corporation (Fall 2026)
-     This experience entry is intentionally long in order to test and verify whether the full text i
+     Functional description
 =======================
 Save profile? (y/N):
 N

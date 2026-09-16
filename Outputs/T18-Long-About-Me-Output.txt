@@ -28,8 +28,11 @@ Graduation year (2026):
 
 Edit About Me? (y/N):
 Y
-Enter About Me text:
+Enter About Me (optional, max 200 chars):
 This About Me entry is intentionally long in order to test and verify whether the full text is displ
+About Me must be 200 characters or less.
+Enter About Me (optional, max 200 chars):
+Functional about me
 Edit Experience? (y/N):
 N
 Edit Education? (y/N):
@@ -37,7 +40,7 @@ N
 === Profile Preview ===
 Name: Cameron Goz
 University: USF | Major: CS | Graduation: 2026
-About Me: This About Me entry is intentionally long in order to test and verify whether the full tex
+About Me: Functional about me
 =======================
 Save profile? (y/N):
 N
