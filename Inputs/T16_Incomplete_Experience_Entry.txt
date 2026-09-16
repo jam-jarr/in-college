@@ -11,9 +11,12 @@ N
 Y
 Y
 
+accept
 
+accept
 
-This description is present while required experience fields are blank.
+accept
+description
 N
 N
 N

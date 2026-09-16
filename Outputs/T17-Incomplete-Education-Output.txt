@@ -26,7 +26,7 @@ Major (CS):
 
 Graduation year (2026):
 
-Edit About Me? (y/N):
+Enter About Me (optional, max 200 chars):
 N
 Edit Experience? (y/N):
 N
@@ -36,17 +36,27 @@ Add education entry 1? (y/N):
 Y
   Degree:
 
+Degree is required.
+  Degree:
+accept
   University:
 
+University is required.
+  University:
+accept
   Years attended:
 
+Years attended is required.
+  Years attended:
+accept
 Add education entry 2? (y/N):
 N
 === Profile Preview ===
 Name: Cameron Goz
 University: USF | Major: CS | Graduation: 2026
+About Me: N
 Education:
-  1. ,  ()
+  1. accept, accept (accept)
 =======================
 Save profile? (y/N):
 N
