@@ -1192,6 +1192,15 @@
         EDIT-OPTIONAL-SECTIONS.
 
             *> About Me
+            MOVE "Edit About Me? (y/N):" TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
+            PERFORM READ-USER-INPUT
+
+            IF INPUT-AVAILABLE
+                MOVE WS-USER-INPUT(1:1) TO WS-TEMP-CHOICE
+
+                IF WS-TEMP-CHOICE = 'Y' OR WS-TEMP-CHOICE = 'y'
+
                     SET REQUIRED-FIELD-INVALID TO TRUE
 
                     PERFORM UNTIL REQUIRED-FIELD-VALID OR INPUT-ENDED
@@ -1223,6 +1232,9 @@
                         END-IF
 
                     END-PERFORM
+
+                END-IF
+            END-IF
 
             *> Experience
             SET SECTION-CONTINUE TO TRUE
