@@ -155,6 +155,14 @@
         01 WS-PROFILE-INDEX PIC 9 VALUE 0.
         01 WS-CURRENT-PROFILE-INDEX PIC 9 VALUE 0.
 
+        *> values used during Epic 3 full-name user search
+        01 WS-SEARCH-NAME PIC X(500).
+        01 WS-STORED-FULL-NAME PIC X(500).
+       
+        01 WS-SEARCH-FOUND PIC X VALUE "N".
+            88 SEARCH-FOUND VALUE "Y".
+            88 SEARCH-NOT-FOUND VALUE "N".
+
         01 WS-PROFILE-FOUND PIC X VALUE "N".
             88 PROFILE-FOUND VALUE "Y".
             88 PROFILE-NOT-FOUND VALUE "N".
@@ -599,12 +607,7 @@
                         PERFORM WRITE-MESSAGE
 
                     WHEN "4"
-                        STRING
-                            "Find someone you know is "
-                            "under construction."
-                            INTO WS-MESSAGE
-                        END-STRING
-                        PERFORM WRITE-MESSAGE
+                        PERFORM SEARCH-USERS
 
                     WHEN "5"
                         PERFORM SKILL-MENU
@@ -699,6 +702,65 @@
 
             END-PERFORM
 
+            EXIT.
+
+        SEARCH-USERS.
+       
+            *> reset search state
+            SET SEARCH-NOT-FOUND TO TRUE
+            MOVE SPACES TO WS-SEARCH-NAME
+            MOVE SPACES TO WS-STORED-FULL-NAME
+       
+            *> ask the user for the exact full name
+            MOVE "Enter the full name of the person you are looking for:"
+                TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
+        
+            PERFORM READ-USER-INPUT
+       
+            IF INPUT-ENDED
+                EXIT PARAGRAPH
+            END-IF
+       
+            MOVE WS-USER-INPUT TO WS-SEARCH-NAME
+       
+            *> search through all stored profiles
+            PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
+                UNTIL WS-PROFILE-INDEX > WS-PROFILE-COUNT
+                OR SEARCH-FOUND
+       
+                MOVE SPACES TO WS-STORED-FULL-NAME
+       
+                STRING
+                    FUNCTION TRIM(
+                        WS-PROF-FIRST-NAME(WS-PROFILE-INDEX))
+                        DELIMITED BY SIZE
+                    " "
+                        DELIMITED BY SIZE
+                    FUNCTION TRIM(
+                        WS-PROF-LAST-NAME(WS-PROFILE-INDEX))
+                        DELIMITED BY SIZE
+                    INTO WS-STORED-FULL-NAME
+                END-STRING
+       
+                IF WS-SEARCH-NAME = WS-STORED-FULL-NAME
+                    SET SEARCH-FOUND TO TRUE
+                    MOVE WS-PROFILE-INDEX
+                        TO WS-CURRENT-PROFILE-INDEX
+                END-IF
+       
+            END-PERFORM
+       
+            IF SEARCH-FOUND
+                MOVE "--- Found User Profile ---" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                PERFORM DISPLAY-PROFILE
+            ELSE
+                MOVE "No one by that name could be found."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+            END-IF
+       
             EXIT.
 
         LOAD-PROFILES.
