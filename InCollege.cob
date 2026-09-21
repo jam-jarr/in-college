@@ -893,6 +893,17 @@
             END-PERFORM
 
             IF PROFILE-FOUND
+                MOVE SPACES TO WS-MESSAGE
+                STRING
+                    "==== Profile for "
+                    FUNCTION TRIM(WS-PROF-FIRST-NAME(
+                        WS-CURRENT-PROFILE-INDEX))
+                    " "
+                    FUNCTION TRIM(WS-PROF-LAST-NAME(
+                        WS-CURRENT-PROFILE-INDEX))
+                    INTO WS-MESSAGE
+                END-STRING
+                PERFORM WRITE-MESSAGE
                 PERFORM DISPLAY-PROFILE
             ELSE
                 MOVE "No profile found. Please create a profile first."
@@ -967,6 +978,8 @@
 
             PERFORM EDIT-REQUIRED-FIELDS
             PERFORM EDIT-OPTIONAL-SECTIONS
+            MOVE "=== Profile Preview ===" TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
             PERFORM DISPLAY-PROFILE
 
             MOVE "Save profile? (y/N):" TO WS-MESSAGE
@@ -1706,12 +1719,9 @@
 
         DISPLAY-PROFILE.
 
-            MOVE "=== Profile Preview ===" TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
-
             MOVE SPACES TO WS-MESSAGE
             STRING
-                "Name: "
+                "Name:        "
                 FUNCTION TRIM(WS-PROF-FIRST-NAME(
                     WS-CURRENT-PROFILE-INDEX))
                 " "
@@ -1723,13 +1733,25 @@
 
             MOVE SPACES TO WS-MESSAGE
             STRING
-                "University: "
+                "University:  "
                 FUNCTION TRIM(WS-PROF-UNIVERSITY(
                     WS-CURRENT-PROFILE-INDEX))
-                " | Major: "
+                INTO WS-MESSAGE
+            END-STRING
+            PERFORM WRITE-MESSAGE
+
+            MOVE SPACES TO WS-MESSAGE
+            STRING
+                "Major:       "
                 FUNCTION TRIM(WS-PROF-MAJOR(
                     WS-CURRENT-PROFILE-INDEX))
-                " | Graduation: "
+                INTO WS-MESSAGE
+            END-STRING
+            PERFORM WRITE-MESSAGE
+
+            MOVE SPACES TO WS-MESSAGE
+            STRING
+                "Graduation:  "
                 FUNCTION TRIM(WS-PROF-GRAD-YEAR(
                     WS-CURRENT-PROFILE-INDEX))
                 INTO WS-MESSAGE
@@ -1737,9 +1759,11 @@
             PERFORM WRITE-MESSAGE
 
             IF WS-PROF-ABOUT-ME(WS-CURRENT-PROFILE-INDEX) NOT = SPACES
+                MOVE "About Me:" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
                 MOVE SPACES TO WS-MESSAGE
                 STRING
-                    "About Me: "
+                    "  "
                     FUNCTION TRIM(WS-PROF-ABOUT-ME(
                         WS-CURRENT-PROFILE-INDEX))
                     INTO WS-MESSAGE
@@ -1753,29 +1777,38 @@
                 PERFORM VARYING WS-EDIT-INDEX FROM 1 BY 1
                     UNTIL WS-EDIT-INDEX >
                         WS-PROF-EXP-COUNT(WS-CURRENT-PROFILE-INDEX)
+                    MOVE "  ------------------------------" TO WS-MESSAGE
+                    PERFORM WRITE-MESSAGE
                     MOVE SPACES TO WS-MESSAGE
                     STRING
-                        "  "
-                        WS-EDIT-INDEX
-                        ". "
+                        "  Title:       "
                         FUNCTION TRIM(WS-EXP-TITLE(
                             WS-CURRENT-PROFILE-INDEX,
                             WS-EDIT-INDEX))
-                        " at "
-                        FUNCTION TRIM(WS-EXP-COMPANY(
-                            WS-CURRENT-PROFILE-INDEX,
-                            WS-EDIT-INDEX))
-                        " ("
-                        FUNCTION TRIM(WS-EXP-DATES(
-                            WS-CURRENT-PROFILE-INDEX,
-                            WS-EDIT-INDEX))
-                        ")"
                         INTO WS-MESSAGE
                     END-STRING
                     PERFORM WRITE-MESSAGE
                     MOVE SPACES TO WS-MESSAGE
                     STRING
-                        "     "
+                        "  Company:     "
+                        FUNCTION TRIM(WS-EXP-COMPANY(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX))
+                        INTO WS-MESSAGE
+                    END-STRING
+                    PERFORM WRITE-MESSAGE
+                    MOVE SPACES TO WS-MESSAGE
+                    STRING
+                        "  Dates:       "
+                        FUNCTION TRIM(WS-EXP-DATES(
+                            WS-CURRENT-PROFILE-INDEX,
+                            WS-EDIT-INDEX))
+                        INTO WS-MESSAGE
+                    END-STRING
+                    PERFORM WRITE-MESSAGE
+                    MOVE SPACES TO WS-MESSAGE
+                    STRING
+                        "  Description: "
                         FUNCTION TRIM(WS-EXP-DESCRIPTION(
                             WS-CURRENT-PROFILE-INDEX,
                             WS-EDIT-INDEX))
@@ -1783,6 +1816,8 @@
                     END-STRING
                     PERFORM WRITE-MESSAGE
                 END-PERFORM
+                MOVE "  ------------------------------" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
             END-IF
 
             IF WS-PROF-EDU-COUNT(WS-CURRENT-PROFILE-INDEX) > 0
@@ -1791,30 +1826,41 @@
                 PERFORM VARYING WS-EDIT-INDEX FROM 1 BY 1
                     UNTIL WS-EDIT-INDEX >
                         WS-PROF-EDU-COUNT(WS-CURRENT-PROFILE-INDEX)
+                    MOVE "  ------------------------------" TO WS-MESSAGE
+                    PERFORM WRITE-MESSAGE
                     MOVE SPACES TO WS-MESSAGE
                     STRING
-                        "  "
-                        WS-EDIT-INDEX
-                        ". "
+                        "  Degree:     "
                         FUNCTION TRIM(WS-EDU-DEGREE(
                             WS-CURRENT-PROFILE-INDEX,
                             WS-EDIT-INDEX))
-                        ", "
+                        INTO WS-MESSAGE
+                    END-STRING
+                    PERFORM WRITE-MESSAGE
+                    MOVE SPACES TO WS-MESSAGE
+                    STRING
+                        "  University: "
                         FUNCTION TRIM(WS-EDU-UNIVERSITY(
                             WS-CURRENT-PROFILE-INDEX,
                             WS-EDIT-INDEX))
-                        " ("
+                        INTO WS-MESSAGE
+                    END-STRING
+                    PERFORM WRITE-MESSAGE
+                    MOVE SPACES TO WS-MESSAGE
+                    STRING
+                        "  Years:      "
                         FUNCTION TRIM(WS-EDU-YEARS(
                             WS-CURRENT-PROFILE-INDEX,
                             WS-EDIT-INDEX))
-                        ")"
                         INTO WS-MESSAGE
                     END-STRING
                     PERFORM WRITE-MESSAGE
                 END-PERFORM
+                MOVE "  ------------------------------" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
             END-IF
 
-            MOVE "=======================" TO WS-MESSAGE
+            MOVE "================================" TO WS-MESSAGE
             PERFORM WRITE-MESSAGE
 
             EXIT.
