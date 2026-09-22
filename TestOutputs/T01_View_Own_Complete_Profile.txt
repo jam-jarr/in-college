@@ -1,0 +1,57 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+user
+Please enter your password:
+Password1!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+2
+==== Profile for Jamie Smith
+Name:        Jamie Smith
+University:  MIT
+Major:       Computer Science
+Graduation:  2026
+About Me:
+  I love coding and rocket league
+Experience:
+  ------------------------------
+  Title:       Software Engineer
+  Company:     Google
+  Dates:       2022-2024
+  Description: Built scalable systems
+  ------------------------------
+  Title:       Intern
+  Company:     Facebook
+  Dates:       2021-2022
+  Description: Worked on mobile apps
+  ------------------------------
+  Title:       contractor
+  Company:     rock and stone
+  Dates:       2020-2021
+  Description: it was fun
+  ------------------------------
+Education:
+  ------------------------------
+  Degree:     BS Computer Science
+  University: MIT
+  Years:      2021-2025
+  ------------------------------
+================================
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+6

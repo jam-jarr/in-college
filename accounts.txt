@@ -1,1 +1,3 @@
 user                Password1!
+testeraccount       Password1!
+searchtarget        Password1!
