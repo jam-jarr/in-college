@@ -18,7 +18,7 @@ Enter your choice:
 4
 Enter the full name of the person you are looking for:
 Jordan Smith
---- Found User Profile ---
+==== Profile for Jordan Smith
 Name:        Jordan Smith
 University:  a
 Major:       b
@@ -45,7 +45,7 @@ Enter your choice:
 4
 Enter the full name of the person you are looking for:
 Jordan Smith
---- Found User Profile ---
+==== Profile for Jordan Smith
 Name:        Jordan Smith
 University:  a
 Major:       b
