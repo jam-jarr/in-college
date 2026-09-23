@@ -264,7 +264,9 @@
        WRITE-MESSAGE.
 
            *> display the message to the console
-           DISPLAY FUNCTION TRIM(WS-MESSAGE)
+           *> (keep leading spaces for formatting,
+           *>  trim only trailing spaces)
+           DISPLAY FUNCTION TRIM(WS-MESSAGE TRAILING)
 
            *> write the same message to the output file
            MOVE WS-MESSAGE TO OUTPUT-RECORD
