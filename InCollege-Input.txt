@@ -1,12 +1,13 @@
 1
 user
 Password1!
+2
 1
 Jamie
 Smith
 MIT
 Computer Science
-2025
+2027
 Y
 I love coding and rocket league
 Y
@@ -28,4 +29,6 @@ MIT
 2021-2025
 n
 Y
+4
+Jamie Smith
 5

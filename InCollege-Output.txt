@@ -9,25 +9,65 @@ Please enter your password:
 Password1!
 You have successfully logged in
 1. Edit or create profile
-2. Search for a job
-3. Find someone you know
-4. Learn a new skill
-5. Logout
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+2
+==== Profile for Jamie Smith
+Name:        Jamie Smith
+University:  MIT
+Major:       Computer Science
+Graduation:  2027
+About Me:
+  I love coding and rocket league
+Experience:
+  ------------------------------
+  Title:       Software Engineer
+  Company:     Google
+  Dates:       2022-2024
+  Description: Built scalable systems
+  ------------------------------
+  Title:       Intern
+  Company:     Facebook
+  Dates:       2021-2022
+  Description: Worked on mobile apps
+  ------------------------------
+  Title:       contractor
+  Company:     rock and stone
+  Dates:       2020-2021
+  Description: it was fun
+  ------------------------------
+Education:
+  ------------------------------
+  Degree:     BS Computer Science
+  University: MIT
+  Years:      2021-2025
+  ------------------------------
+================================
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
 Enter your choice:
 1
 First name (Jamie):
 Jamie
-Last name (Giarratana):
+Last name (Smith):
 Smith
-University (USF):
+University/College (MIT):
 MIT
-Major (CS):
+Major (Computer Science):
 Computer Science
-Graduation year (2026):
-2025
+Graduation year (2027):
+2027
 Edit About Me? (y/N):
 Y
-Enter About Me text:
+Enter About Me (optional, max 200 chars):
 I love coding and rocket league
 Edit Experience? (y/N):
 Y
@@ -39,7 +79,7 @@ Software Engineer
 Google
   Dates:
 2022-2024
-  Description:
+  Description (optional, max 100 chars):
 Built scalable systems
 Modify experience entry 2 (Intern)? (y/N/q):
 Y
@@ -49,7 +89,7 @@ Intern
 Facebook
   Dates:
 2021-2022
-  Description:
+  Description (optional, max 100 chars):
 Worked on mobile apps
 Modify experience entry 3 (contractor)? (y/N/q):
 n
@@ -66,26 +106,95 @@ MIT
 Add education entry 2? (y/N):
 n
 === Profile Preview ===
-Name: Jamie Smith
-University: MIT | Major: Computer Science | Graduation: 2025
-About Me: I love coding and rocket league
+Name:        Jamie Smith
+University:  MIT
+Major:       Computer Science
+Graduation:  2027
+About Me:
+  I love coding and rocket league
 Experience:
-  1. Software Engineer at Google (2022-2024)
-     Built scalable systems
-  2. Intern at Facebook (2021-2022)
-     Worked on mobile apps
-  3. contractor at rock and stone (2020-2021)
-     it was fun
+  ------------------------------
+  Title:       Software Engineer
+  Company:     Google
+  Dates:       2022-2024
+  Description: Built scalable systems
+  ------------------------------
+  Title:       Intern
+  Company:     Facebook
+  Dates:       2021-2022
+  Description: Worked on mobile apps
+  ------------------------------
+  Title:       contractor
+  Company:     rock and stone
+  Dates:       2020-2021
+  Description: it was fun
+  ------------------------------
 Education:
-  1. BS Computer Science, MIT (2021-2025)
-=======================
+  ------------------------------
+  Degree:     BS Computer Science
+  University: MIT
+  Years:      2021-2025
+  ------------------------------
+================================
 Save profile? (y/N):
 Y
 Profile saved.
 1. Edit or create profile
-2. Search for a job
-3. Find someone you know
-4. Learn a new skill
-5. Logout
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+Enter your choice:
+4
+Enter the full name of the person you are looking for:
+Jamie Smith
+==== Profile for Jamie Smith
+Name:        Jamie Smith
+University:  MIT
+Major:       Computer Science
+Graduation:  2027
+About Me:
+  I love coding and rocket league
+Experience:
+  ------------------------------
+  Title:       Software Engineer
+  Company:     Google
+  Dates:       2022-2024
+  Description: Built scalable systems
+  ------------------------------
+  Title:       Intern
+  Company:     Facebook
+  Dates:       2021-2022
+  Description: Worked on mobile apps
+  ------------------------------
+  Title:       contractor
+  Company:     rock and stone
+  Dates:       2020-2021
+  Description: it was fun
+  ------------------------------
+Education:
+  ------------------------------
+  Degree:     BS Computer Science
+  University: MIT
+  Years:      2021-2025
+  ------------------------------
+================================
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
 Enter your choice:
 5
+Learn a New Skill:
+1. Flip Resets
+2. Double Taps
+3. Musty Flicks
+4. Wizard Flicks
+5. Zen Touch
+6. Go Back
+Enter your choice:
+No input found.
+This skill is under construction.
