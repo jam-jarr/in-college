@@ -752,7 +752,16 @@
             END-PERFORM
        
             IF SEARCH-FOUND
-                MOVE "--- Found User Profile ---" TO WS-MESSAGE
+                MOVE SPACES TO WS-MESSAGE
+                STRING
+                    "==== Profile for "
+                    FUNCTION TRIM(WS-PROF-FIRST-NAME(
+                        WS-CURRENT-PROFILE-INDEX))
+                    " "
+                    FUNCTION TRIM(WS-PROF-LAST-NAME(
+                        WS-CURRENT-PROFILE-INDEX))
+                    INTO WS-MESSAGE
+                END-STRING
                 PERFORM WRITE-MESSAGE
                 PERFORM DISPLAY-PROFILE
             ELSE
