@@ -2,33 +2,8 @@
 user
 Password1!
 2
-1
-Jamie
-Smith
-MIT
-Computer Science
-2027
-Y
-I love coding and rocket league
-Y
-Y
-Software Engineer
-Google
-2022-2024
-Built scalable systems
-Y
-Intern
-Facebook
-2021-2022
-Worked on mobile apps
-n
-Y
-Y
-BS Computer Science
-MIT
-2021-2025
-n
-Y
 4
-Jamie Smith
-5
+Jordan Smith
+4
+Nonexistent user
+6
