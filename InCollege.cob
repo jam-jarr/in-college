@@ -26,6 +26,11 @@
                 ASSIGN TO "profiles.txt"
                 ORGANIZATION IS LINE SEQUENTIAL.
 
+            *> set up persistent connection request storage
+            SELECT OPTIONAL CONNECTION-FILE
+                ASSIGN TO "connections.txt"
+                ORGANIZATION IS LINE SEQUENTIAL.
+
         DATA DIVISION.
        FILE SECTION.
 
@@ -64,6 +69,13 @@
                 10 PROF-EDU-DEGREE      PIC X(30).
                 10 PROF-EDU-UNIVERSITY  PIC X(30).
                 10 PROF-EDU-YEARS       PIC X(10).
+           
+            *> stores pending connection requests
+        FD CONNECTION-FILE.
+        01 CONNECTION-RECORD.
+            05 CONNECTION-SENDER       PIC X(20).
+            05 CONNECTION-RECIPIENT    PIC X(20).
+            05 CONNECTION-STATUS       PIC X.
 
         WORKING-STORAGE SECTION.
 
@@ -194,6 +206,11 @@
         01 WS-SECTION-QUIT PIC X VALUE "N".
             88 SECTION-QUIT VALUE "Y".
             88 SECTION-CONTINUE VALUE "N".
+
+        01 WS-CONNECTION-EOF          PIC X VALUE "N".
+        01 WS-DUPLICATE-REQUEST      PIC X VALUE "N".
+        01 WS-REVERSE-REQUEST        PIC X VALUE "N".
+        01 WS-ALREADY-CONNECTED      PIC X VALUE "N".
 
         PROCEDURE DIVISION.
 
@@ -764,8 +781,39 @@
                         WS-CURRENT-PROFILE-INDEX))
                     INTO WS-MESSAGE
                 END-STRING
+
                 PERFORM WRITE-MESSAGE
                 PERFORM DISPLAY-PROFILE
+               
+                MOVE "1. Send Connection Request"
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+               
+                MOVE "2. Back to Main Menu"
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+               
+                MOVE "Enter your choice:"
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+               
+                PERFORM READ-USER-INPUT
+               
+                IF INPUT-ENDED
+                    EXIT PARAGRAPH
+                END-IF
+
+                IF WS-USER-INPUT = "1"
+                    PERFORM SEND-CONNECTION-REQUEST
+                ELSE
+                    IF WS-USER-INPUT = "2"
+                        CONTINUE
+                    ELSE
+                        MOVE "Invalid selection." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                END-IF
+
             ELSE
                 MOVE "No one by that name could be found."
                     TO WS-MESSAGE
@@ -773,6 +821,8 @@
             END-IF
        
             EXIT.
+
+        COPY SendRequest.
 
         LOAD-PROFILES.
 
