@@ -26,6 +26,11 @@
                 ASSIGN TO "profiles.txt"
                 ORGANIZATION IS LINE SEQUENTIAL.
 
+           *> Epic 4 - persistent connection request storage
+           SELECT OPTIONAL CONNECTION-FILE
+               ASSIGN TO "connections.txt"
+               ORGANIZATION IS LINE SEQUENTIAL.
+
         DATA DIVISION.
        FILE SECTION.
 
@@ -64,6 +69,10 @@
                 10 PROF-EDU-DEGREE      PIC X(30).
                 10 PROF-EDU-UNIVERSITY  PIC X(30).
                 10 PROF-EDU-YEARS       PIC X(10).
+
+                *> Epic 4 - connection request storage
+               FD CONNECTION-FILE.
+               01 CONNECTION-RECORD PIC X(100).
 
         WORKING-STORAGE SECTION.
 
@@ -195,7 +204,22 @@
             88 SECTION-QUIT VALUE "Y".
             88 SECTION-CONTINUE VALUE "N".
 
+
+        *> Epic 4 - View Pending Connection Requests
+       01 CONNECTION-SENDER PIC X(20).
+       01 CONNECTION-RECIPIENT PIC X(20).
+       01 CONNECTION-STATUS PIC X.
+       
+       01 WS-CONNECTION-FILE-ENDED PIC X VALUE "N".
+           88 CONNECTION-FILE-ENDED VALUE "Y".
+           88 CONNECTION-FILE-AVAILABLE VALUE "N".
+       
+       01 WS-PENDING-FOUND PIC X VALUE "N".
+           88 PENDING-FOUND VALUE "Y".
+           88 NO-PENDING-FOUND VALUE "N".
+
         PROCEDURE DIVISION.
+
 
        MAIN-PROCEDURE.
 
@@ -583,6 +607,9 @@
                 MOVE "6. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
+                MOVE "7. View My Pending Connection Requests" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
                 MOVE "Enter your choice:" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
@@ -616,6 +643,9 @@
 
                     WHEN "6"
                         MOVE "Y" TO WS-LOGOUT-SELECTED
+
+                    WHEN "7"
+                        PERFORM VIEW-PENDING-REQUESTS
 
                     WHEN OTHER
                         MOVE "Invalid selection." TO WS-MESSAGE
@@ -1875,3 +1905,66 @@
             PERFORM WRITE-MESSAGE
 
             EXIT.
+
+VIEW-PENDING-REQUESTS.
+
+    SET CONNECTION-FILE-AVAILABLE TO TRUE
+    SET NO-PENDING-FOUND TO TRUE
+
+    MOVE "--- Pending Connection Requests ---"
+        TO WS-MESSAGE
+    PERFORM WRITE-MESSAGE
+
+    OPEN INPUT CONNECTION-FILE
+
+    PERFORM UNTIL CONNECTION-FILE-ENDED
+
+        READ CONNECTION-FILE
+            AT END
+                SET CONNECTION-FILE-ENDED TO TRUE
+
+            NOT AT END
+                MOVE SPACES TO CONNECTION-SENDER
+                MOVE SPACES TO CONNECTION-RECIPIENT
+                MOVE SPACES TO CONNECTION-STATUS
+
+                UNSTRING CONNECTION-RECORD
+                    DELIMITED BY "|"
+                    INTO CONNECTION-SENDER
+                         CONNECTION-RECIPIENT
+                         CONNECTION-STATUS
+                END-UNSTRING
+
+                IF FUNCTION TRIM(CONNECTION-RECIPIENT)
+                    = FUNCTION TRIM(WS-LOGIN-USERNAME)
+                    AND FUNCTION TRIM(CONNECTION-STATUS) = "P"
+
+                    SET PENDING-FOUND TO TRUE
+
+                    MOVE SPACES TO WS-MESSAGE
+                    STRING
+                        FUNCTION TRIM(CONNECTION-SENDER)
+                        INTO WS-MESSAGE
+                    END-STRING
+
+                    PERFORM WRITE-MESSAGE
+                END-IF
+
+        END-READ
+
+    END-PERFORM
+
+    CLOSE CONNECTION-FILE
+
+    IF NO-PENDING-FOUND
+        MOVE
+            "You have no pending connection requests at this time."
+            TO WS-MESSAGE
+        PERFORM WRITE-MESSAGE
+    END-IF
+
+    MOVE "-----------------------------------"
+        TO WS-MESSAGE
+    PERFORM WRITE-MESSAGE
+
+    EXIT.
