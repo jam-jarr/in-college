@@ -17,7 +17,7 @@
                ORGANIZATION IS LINE SEQUENTIAL.
 
             *> set up persistent account storage
-            SELECT ACCOUNT-FILE
+            SELECT OPTIONAL ACCOUNT-FILE
                 ASSIGN TO "accounts.txt"
                 ORGANIZATION IS LINE SEQUENTIAL.
 
