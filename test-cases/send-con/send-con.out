@@ -29,7 +29,7 @@ Graduation:  2030
 2. Back to Main Menu
 Enter your choice:
 1
-You already have a pending connection request to this user.
+Connection request sent to Jordan Smith.
 1. Edit or create profile
 2. View my profile
 3. Search for a job
@@ -42,6 +42,28 @@ Enter your choice:
 Enter the full name of the person you are looking for:
 Nonexistent user
 No one by that name could be found.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+7. View My Pending Connection Requests
+Enter your choice:
+4
+Enter the full name of the person you are looking for:
+Jordan Smith
+==== Profile for Jordan Smith
+Name:        Jordan Smith
+University:  a
+Major:       b
+Graduation:  2030
+================================
+1. Send Connection Request
+2. Back to Main Menu
+Enter your choice:
+1
+You already have a pending connection request to this user.
 1. Edit or create profile
 2. View my profile
 3. Search for a job

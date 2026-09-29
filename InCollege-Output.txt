@@ -14,45 +14,7 @@ You have successfully logged in
 4. Find someone you know
 5. Learn a new skill
 6. Logout
-Enter your choice:
-2
-==== Profile for Jamie Smith
-Name:        Jamie Smith
-University:  MIT
-Major:       Computer Science
-Graduation:  2026
-About Me:
-  I love coding and rocket league
-Experience:
-  ------------------------------
-  Title:       Software Engineer
-  Company:     Google
-  Dates:       2022-2024
-  Description: Built scalable systems
-  ------------------------------
-  Title:       Intern
-  Company:     Facebook
-  Dates:       2021-2022
-  Description: Worked on mobile apps
-  ------------------------------
-  Title:       contractor
-  Company:     rock and stone
-  Dates:       2020-2021
-  Description: it was fun
-  ------------------------------
-Education:
-  ------------------------------
-  Degree:     BS Computer Science
-  University: MIT
-  Years:      2021-2025
-  ------------------------------
-================================
-1. Edit or create profile
-2. View my profile
-3. Search for a job
-4. Find someone you know
-5. Learn a new skill
-6. Logout
+7. View My Pending Connection Requests
 Enter your choice:
 4
 Enter the full name of the person you are looking for:
@@ -63,12 +25,18 @@ University:  a
 Major:       b
 Graduation:  2030
 ================================
+1. Send Connection Request
+2. Back to Main Menu
+Enter your choice:
+1
+Connection request sent to Jordan Smith.
 1. Edit or create profile
 2. View my profile
 3. Search for a job
 4. Find someone you know
 5. Learn a new skill
 6. Logout
+7. View My Pending Connection Requests
 Enter your choice:
 4
 Enter the full name of the person you are looking for:
@@ -80,5 +48,28 @@ No one by that name could be found.
 4. Find someone you know
 5. Learn a new skill
 6. Logout
+7. View My Pending Connection Requests
+Enter your choice:
+4
+Enter the full name of the person you are looking for:
+Jordan Smith
+==== Profile for Jordan Smith
+Name:        Jordan Smith
+University:  a
+Major:       b
+Graduation:  2030
+================================
+1. Send Connection Request
+2. Back to Main Menu
+Enter your choice:
+1
+You already have a pending connection request to this user.
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+7. View My Pending Connection Requests
 Enter your choice:
 6
