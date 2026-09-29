@@ -70,9 +70,12 @@
                 10 PROF-EDU-UNIVERSITY  PIC X(30).
                 10 PROF-EDU-YEARS       PIC X(10).
 
-                *> Epic 4 - connection request storage
+               *> Epic 4 - connection request storage
                FD CONNECTION-FILE.
-               01 CONNECTION-RECORD PIC X(100).
+               01 CONNECTION-RECORD.
+                   05 CONNECTION-SENDER       PIC X(20).
+                   05 CONNECTION-RECIPIENT    PIC X(20).
+                   05 CONNECTION-STATUS       PIC X.
 
         WORKING-STORAGE SECTION.
 
@@ -205,10 +208,7 @@
             88 SECTION-CONTINUE VALUE "N".
 
 
-        *> Epic 4 - View Pending Connection Requests
-       01 CONNECTION-SENDER PIC X(20).
-       01 CONNECTION-RECIPIENT PIC X(20).
-       01 CONNECTION-STATUS PIC X.
+
        
        01 WS-CONNECTION-FILE-ENDED PIC X VALUE "N".
            88 CONNECTION-FILE-ENDED VALUE "Y".
@@ -1924,16 +1924,7 @@ VIEW-PENDING-REQUESTS.
                 SET CONNECTION-FILE-ENDED TO TRUE
 
             NOT AT END
-                MOVE SPACES TO CONNECTION-SENDER
-                MOVE SPACES TO CONNECTION-RECIPIENT
-                MOVE SPACES TO CONNECTION-STATUS
 
-                UNSTRING CONNECTION-RECORD
-                    DELIMITED BY "|"
-                    INTO CONNECTION-SENDER
-                         CONNECTION-RECIPIENT
-                         CONNECTION-STATUS
-                END-UNSTRING
 
                 IF FUNCTION TRIM(CONNECTION-RECIPIENT)
                     = FUNCTION TRIM(WS-LOGIN-USERNAME)
