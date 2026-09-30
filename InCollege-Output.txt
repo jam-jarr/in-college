@@ -16,6 +16,18 @@ You have successfully logged in
 6. Logout
 7. View My Pending Connection Requests
 Enter your choice:
+7
+--- Pending Connection Requests ---
+You have no pending connection requests at this time.
+-----------------------------------
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+7. View My Pending Connection Requests
+Enter your choice:
 4
 Enter the full name of the person you are looking for:
 Jordan Smith
@@ -29,7 +41,7 @@ Graduation:  2030
 2. Back to Main Menu
 Enter your choice:
 1
-Connection request sent to Jordan Smith.
+You already have a pending connection request to this user.
 1. Edit or create profile
 2. View my profile
 3. Search for a job
