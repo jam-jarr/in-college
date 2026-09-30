@@ -17,7 +17,7 @@
                ORGANIZATION IS LINE SEQUENTIAL.
 
             *> set up persistent account storage
-            SELECT ACCOUNT-FILE
+            SELECT OPTIONAL ACCOUNT-FILE
                 ASSIGN TO "accounts.txt"
                 ORGANIZATION IS LINE SEQUENTIAL.
 
@@ -25,6 +25,11 @@
             SELECT OPTIONAL PROFILE-FILE
                 ASSIGN TO "profiles.txt"
                 ORGANIZATION IS LINE SEQUENTIAL.
+
+           *> Epic 4 - persistent connection request storage
+           SELECT OPTIONAL CONNECTION-FILE
+               ASSIGN TO "connections.txt"
+               ORGANIZATION IS LINE SEQUENTIAL.
 
         DATA DIVISION.
        FILE SECTION.
@@ -64,6 +69,13 @@
                 10 PROF-EDU-DEGREE      PIC X(30).
                 10 PROF-EDU-UNIVERSITY  PIC X(30).
                 10 PROF-EDU-YEARS       PIC X(10).
+
+            *> stores pending connection requests
+        FD CONNECTION-FILE.
+        01 CONNECTION-RECORD.
+            05 CONNECTION-SENDER       PIC X(20).
+            05 CONNECTION-RECIPIENT    PIC X(20).
+            05 CONNECTION-STATUS       PIC X.
 
         WORKING-STORAGE SECTION.
 
@@ -158,7 +170,7 @@
         *> values used during Epic 3 full-name user search
         01 WS-SEARCH-NAME PIC X(500).
         01 WS-STORED-FULL-NAME PIC X(500).
-       
+
         01 WS-SEARCH-FOUND PIC X VALUE "N".
             88 SEARCH-FOUND VALUE "Y".
             88 SEARCH-NOT-FOUND VALUE "N".
@@ -185,7 +197,7 @@
         01 WS-REQUIRED-FIELD-VALID PIC X VALUE "N".
             88 REQUIRED-FIELD-VALID VALUE "Y".
             88 REQUIRED-FIELD-INVALID VALUE "N".
-       
+
 
 
         01 WS-SAVE-PROFILE PIC X VALUE "N".
@@ -195,7 +207,21 @@
             88 SECTION-QUIT VALUE "Y".
             88 SECTION-CONTINUE VALUE "N".
 
+       01 WS-CONNECTION-FILE-ENDED PIC X VALUE "N".
+           88 CONNECTION-FILE-ENDED VALUE "Y".
+           88 CONNECTION-FILE-AVAILABLE VALUE "N".
+
+       01 WS-PENDING-FOUND PIC X VALUE "N".
+           88 PENDING-FOUND VALUE "Y".
+           88 NO-PENDING-FOUND VALUE "N".
+
+        01 WS-CONNECTION-EOF          PIC X VALUE "N".
+        01 WS-DUPLICATE-REQUEST      PIC X VALUE "N".
+        01 WS-REVERSE-REQUEST        PIC X VALUE "N".
+        01 WS-ALREADY-CONNECTED      PIC X VALUE "N".
+
         PROCEDURE DIVISION.
+
 
        MAIN-PROCEDURE.
 
@@ -583,6 +609,9 @@
                 MOVE "6. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
+                MOVE "7. View My Pending Connection Requests" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
                 MOVE "Enter your choice:" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
@@ -616,6 +645,9 @@
 
                     WHEN "6"
                         MOVE "Y" TO WS-LOGOUT-SELECTED
+
+                    WHEN "7"
+                        PERFORM VIEW-PENDING-REQUESTS
 
                     WHEN OTHER
                         MOVE "Invalid selection." TO WS-MESSAGE
@@ -707,32 +739,32 @@
             EXIT.
 
         SEARCH-USERS.
-       
+
             *> reset search state
             SET SEARCH-NOT-FOUND TO TRUE
             MOVE SPACES TO WS-SEARCH-NAME
             MOVE SPACES TO WS-STORED-FULL-NAME
-       
+
             *> ask the user for the exact full name
             MOVE "Enter the full name of the person you are looking for:"
                 TO WS-MESSAGE
             PERFORM WRITE-MESSAGE
-        
+
             PERFORM READ-USER-INPUT
-       
+
             IF INPUT-ENDED
                 EXIT PARAGRAPH
             END-IF
-       
+
             MOVE WS-USER-INPUT TO WS-SEARCH-NAME
-       
+
             *> search through all stored profiles
             PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
                 UNTIL WS-PROFILE-INDEX > WS-PROFILE-COUNT
                 OR SEARCH-FOUND
-       
+
                 MOVE SPACES TO WS-STORED-FULL-NAME
-       
+
                 STRING
                     FUNCTION TRIM(
                         WS-PROF-FIRST-NAME(WS-PROFILE-INDEX))
@@ -744,15 +776,15 @@
                         DELIMITED BY SIZE
                     INTO WS-STORED-FULL-NAME
                 END-STRING
-       
+
                 IF WS-SEARCH-NAME = WS-STORED-FULL-NAME
                     SET SEARCH-FOUND TO TRUE
                     MOVE WS-PROFILE-INDEX
                         TO WS-CURRENT-PROFILE-INDEX
                 END-IF
-       
+
             END-PERFORM
-       
+
             IF SEARCH-FOUND
                 MOVE SPACES TO WS-MESSAGE
                 STRING
@@ -764,15 +796,48 @@
                         WS-CURRENT-PROFILE-INDEX))
                     INTO WS-MESSAGE
                 END-STRING
+
                 PERFORM WRITE-MESSAGE
                 PERFORM DISPLAY-PROFILE
+
+                MOVE "1. Send Connection Request"
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "2. Back to Main Menu"
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "Enter your choice:"
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PARAGRAPH
+                END-IF
+
+                IF WS-USER-INPUT = "1"
+                    PERFORM SEND-CONNECTION-REQUEST
+                ELSE
+                    IF WS-USER-INPUT = "2"
+                        CONTINUE
+                    ELSE
+                        MOVE "Invalid selection." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+                    END-IF
+                END-IF
+
             ELSE
                 MOVE "No one by that name could be found."
                     TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
             END-IF
-       
+
             EXIT.
+
+        COPY SendRequest.
 
         LOAD-PROFILES.
 
@@ -1875,3 +1940,57 @@
             PERFORM WRITE-MESSAGE
 
             EXIT.
+
+VIEW-PENDING-REQUESTS.
+
+    SET CONNECTION-FILE-AVAILABLE TO TRUE
+    SET NO-PENDING-FOUND TO TRUE
+
+    MOVE "--- Pending Connection Requests ---"
+        TO WS-MESSAGE
+    PERFORM WRITE-MESSAGE
+
+    OPEN INPUT CONNECTION-FILE
+
+    PERFORM UNTIL CONNECTION-FILE-ENDED
+
+        READ CONNECTION-FILE
+            AT END
+                SET CONNECTION-FILE-ENDED TO TRUE
+
+            NOT AT END
+
+
+                IF FUNCTION TRIM(CONNECTION-RECIPIENT)
+                    = FUNCTION TRIM(WS-LOGIN-USERNAME)
+                    AND FUNCTION TRIM(CONNECTION-STATUS) = "P"
+
+                    SET PENDING-FOUND TO TRUE
+
+                    MOVE SPACES TO WS-MESSAGE
+                    STRING
+                        FUNCTION TRIM(CONNECTION-SENDER)
+                        INTO WS-MESSAGE
+                    END-STRING
+
+                    PERFORM WRITE-MESSAGE
+                END-IF
+
+        END-READ
+
+    END-PERFORM
+
+    CLOSE CONNECTION-FILE
+
+    IF NO-PENDING-FOUND
+        MOVE
+            "You have no pending connection requests at this time."
+            TO WS-MESSAGE
+        PERFORM WRITE-MESSAGE
+    END-IF
+
+    MOVE "-----------------------------------"
+        TO WS-MESSAGE
+    PERFORM WRITE-MESSAGE
+
+    EXIT.
