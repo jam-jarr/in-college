@@ -23,6 +23,8 @@ to
 01 WS-INPUT-MODE PIC X VALUE 'C'.
 ```
 
+The `interactive-use.sh` shell script toggles this for you.
+
 ## Docker
 
 If you do not have cobc installed, you can build and run it with Docker
