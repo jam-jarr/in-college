@@ -1,6 +1,6 @@
-Week 4:
-Giarratana, Jamie: Tester #1
-Gonzalez, Ivan: Tester #2
-Goz, Cameron: Scrum Master
-Hasan, Mahmoud: Developer #1
-Hashmi, Aayet: Developer #2
+Week 5:
+Giarratana, Jamie: Tester #2
+Gonzalez, Ivan: Scrum Master
+Goz, Cameron: Developer #1
+Hasan, Mahmoud: Developer #2
+Hashmi, Aayet: Tester #1
