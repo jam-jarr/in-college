@@ -90,7 +90,7 @@
 
        *> stores account information while the program runs
        01 WS-ACCOUNTS.
-           05 WS-ACCOUNT OCCURS 5 TIMES.
+           05 WS-ACCOUNT OCCURS 10 TIMES.
                10 WS-ACCOUNT-USERNAME PIC X(20).
                10 WS-ACCOUNT-PASSWORD PIC X(12).
 
@@ -98,8 +98,8 @@
            88 USERNAME-EXISTS VALUE "Y".
            88 USERNAME-AVAILABLE VALUE "N".
 
-       01 WS-ACCOUNT-COUNT PIC 9 VALUE 0.
-       01 WS-ACCOUNT-INDEX PIC 9 VALUE 0.
+       01 WS-ACCOUNT-COUNT PIC 99 VALUE 0.
+       01 WS-ACCOUNT-INDEX PIC 99 VALUE 0.
 
        01 WS-ACCOUNT-FILE-ENDED PIC X VALUE "N".
            88 ACCOUNT-FILE-ENDED VALUE "Y".
@@ -141,9 +141,9 @@
             88 FILE-INPUT-MODE VALUE 'F'.
             88 CONSOLE-INPUT-MODE VALUE 'C'.
 
-        *> profile data (up to 5, matching max accounts)
+        *> profile data (up to 10, matching max accounts)
         01 WS-PROFILES.
-            05 WS-PROFILE OCCURS 5 TIMES.
+            05 WS-PROFILE OCCURS 10 TIMES.
                 10 WS-PROF-USERNAME        PIC X(20).
                 10 WS-PROF-FIRST-NAME     PIC X(20).
                 10 WS-PROF-LAST-NAME      PIC X(20).
@@ -163,9 +163,9 @@
                     15 WS-EDU-UNIVERSITY  PIC X(30).
                     15 WS-EDU-YEARS       PIC X(10).
 
-        01 WS-PROFILE-COUNT PIC 9 VALUE 0.
-        01 WS-PROFILE-INDEX PIC 9 VALUE 0.
-        01 WS-CURRENT-PROFILE-INDEX PIC 9 VALUE 0.
+        01 WS-PROFILE-COUNT PIC 99 VALUE 0.
+        01 WS-PROFILE-INDEX PIC 99 VALUE 0.
+        01 WS-CURRENT-PROFILE-INDEX PIC 99 VALUE 0.
 
         *> values used during Epic 3 full-name user search
         01 WS-SEARCH-NAME PIC X(500).
@@ -215,6 +215,12 @@
            88 PENDING-FOUND VALUE "Y".
            88 NO-PENDING-FOUND VALUE "N".
 
+       01 WS-NETWORK-FOUND PIC X VALUE "N".
+           88 NETWORK-FOUND VALUE "Y".
+            88 NO-NETWORK-FOUND VALUE "N".
+
+       01 WS-NETWORK-USERNAME PIC X(20).
+
         01 WS-CONNECTION-EOF          PIC X VALUE "N".
         01 WS-DUPLICATE-REQUEST      PIC X VALUE "N".
         01 WS-REVERSE-REQUEST        PIC X VALUE "N".
@@ -242,7 +248,7 @@
            *>MOVE 1 TO WS-ACCOUNT-COUNT
 
            *> temporary test for saving an account
-           *>IF WS-ACCOUNT-COUNT < 5
+           *>IF WS-ACCOUNT-COUNT < 10
            *>    ADD 1 TO WS-ACCOUNT-COUNT
 
            *>    MOVE "testuser"
@@ -340,7 +346,7 @@
                        SET ACCOUNT-FILE-ENDED TO TRUE
 
                    NOT AT END
-                       IF WS-ACCOUNT-COUNT < 5
+                       IF WS-ACCOUNT-COUNT < 10
                            ADD 1 TO WS-ACCOUNT-COUNT
                            MOVE ACCOUNT-RECORD-USERNAME
                                TO WS-ACCOUNT-USERNAME
@@ -374,7 +380,7 @@
        CREATE-ACCOUNT.
 
            *> make sure another account can be created
-           IF WS-ACCOUNT-COUNT >= 5
+           IF WS-ACCOUNT-COUNT >= 10
                STRING
                    "All permitted accounts have been created, "
                    "please come back later"
@@ -612,6 +618,9 @@
                 MOVE "7. View My Pending Connection Requests" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
+                MOVE "8. View My Network" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
                 MOVE "Enter your choice:" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
@@ -648,6 +657,9 @@
 
                     WHEN "7"
                         PERFORM VIEW-PENDING-REQUESTS
+
+                    WHEN "8"
+                       PERFORM VIEW-NETWORK
 
                     WHEN OTHER
                         MOVE "Invalid selection." TO WS-MESSAGE
@@ -849,7 +861,7 @@
                     AT END
                         SET PROFILE-FILE-ENDED TO TRUE
                     NOT AT END
-                        IF WS-PROFILE-COUNT < 5
+                        IF WS-PROFILE-COUNT < 10
                             ADD 1 TO WS-PROFILE-COUNT
                             MOVE PROF-USERNAME
                                 TO WS-PROF-USERNAME(WS-PROFILE-COUNT)
@@ -1007,7 +1019,7 @@
 
             *> if not found, create a new profile slot
             IF PROFILE-NOT-FOUND
-                IF WS-PROFILE-COUNT < 5
+                IF WS-PROFILE-COUNT < 10
                     ADD 1 TO WS-PROFILE-COUNT
                     MOVE WS-PROFILE-COUNT TO WS-CURRENT-PROFILE-INDEX
                     MOVE WS-LOGIN-USERNAME
@@ -1991,6 +2003,90 @@ VIEW-PENDING-REQUESTS.
 
     MOVE "-----------------------------------"
         TO WS-MESSAGE
+    PERFORM WRITE-MESSAGE
+        EXIT.
+
+    VIEW-NETWORK.
+
+    SET CONNECTION-FILE-AVAILABLE TO TRUE
+    SET NO-NETWORK-FOUND TO TRUE
+
+    MOVE "--- Your Network ---" TO WS-MESSAGE
+    PERFORM WRITE-MESSAGE
+
+    OPEN INPUT CONNECTION-FILE
+
+    PERFORM UNTIL CONNECTION-FILE-ENDED
+
+        READ CONNECTION-FILE
+            AT END
+                SET CONNECTION-FILE-ENDED TO TRUE
+
+            NOT AT END
+                MOVE SPACES TO WS-NETWORK-USERNAME
+
+                IF FUNCTION TRIM(CONNECTION-STATUS) = "C"
+
+                    IF FUNCTION TRIM(CONNECTION-SENDER)
+                        = FUNCTION TRIM(WS-LOGIN-USERNAME)
+
+                        MOVE CONNECTION-RECIPIENT
+                            TO WS-NETWORK-USERNAME
+                    ELSE
+                        IF FUNCTION TRIM(CONNECTION-RECIPIENT)
+                            = FUNCTION TRIM(WS-LOGIN-USERNAME)
+
+                            MOVE CONNECTION-SENDER
+                                TO WS-NETWORK-USERNAME
+                        END-IF
+                    END-IF
+
+                END-IF
+
+                IF WS-NETWORK-USERNAME NOT = SPACES
+
+                    PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
+                        UNTIL WS-PROFILE-INDEX > WS-PROFILE-COUNT
+
+                        IF FUNCTION TRIM(
+                            WS-PROF-USERNAME(WS-PROFILE-INDEX))
+                            = FUNCTION TRIM(WS-NETWORK-USERNAME)
+
+                            SET NETWORK-FOUND TO TRUE
+
+                            MOVE SPACES TO WS-MESSAGE
+                            STRING
+                                "Connected with: "
+                                FUNCTION TRIM(
+                                    WS-PROF-FIRST-NAME(
+                                        WS-PROFILE-INDEX))
+                                " "
+                                FUNCTION TRIM(
+                                    WS-PROF-LAST-NAME(
+                                        WS-PROFILE-INDEX))
+                                INTO WS-MESSAGE
+                            END-STRING
+
+                            PERFORM WRITE-MESSAGE
+                        END-IF
+
+                    END-PERFORM
+
+                END-IF
+
+        END-READ
+
+    END-PERFORM
+
+    CLOSE CONNECTION-FILE
+
+    IF NO-NETWORK-FOUND
+        MOVE "You have no established connections."
+            TO WS-MESSAGE
+        PERFORM WRITE-MESSAGE
+    END-IF
+
+    MOVE "--------------------" TO WS-MESSAGE
     PERFORM WRITE-MESSAGE
 
     EXIT.
