@@ -5,6 +5,7 @@
             MOVE "N" TO WS-DUPLICATE-REQUEST
             MOVE "N" TO WS-REVERSE-REQUEST
             MOVE "N" TO WS-ALREADY-CONNECTED
+            MOVE "N" TO WS-REJECTED-REQUEST
        
             *> check existing pending connection requests
             OPEN INPUT CONNECTION-FILE
@@ -57,13 +58,29 @@
            
                             MOVE "Y" TO WS-REVERSE-REQUEST
                         END-IF
-       
+                       
+                       IF CONNECTION-STATUS = "R"
+                           AND CONNECTION-SENDER = WS-LOGIN-USERNAME
+                           AND CONNECTION-RECIPIENT =
+                               WS-PROF-USERNAME(
+                                   WS-CURRENT-PROFILE-INDEX)
+                       
+                           MOVE "Y" TO WS-REJECTED-REQUEST
+                       END-IF
                 END-READ
        
             END-PERFORM
        
             CLOSE CONNECTION-FILE
-       
+            IF WS-REJECTED-REQUEST = "Y"
+
+               MOVE
+                   "You cannot send another request to this user."
+                   TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+           
+            ELSE           
+           
             IF WS-ALREADY-CONNECTED = "Y"
 
                 MOVE "You are already connected with this user."

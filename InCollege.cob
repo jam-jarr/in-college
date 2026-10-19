@@ -29,7 +29,8 @@
            *> Epic 4 - persistent connection request storage
            SELECT OPTIONAL CONNECTION-FILE
                ASSIGN TO "connections.txt"
-               ORGANIZATION IS LINE SEQUENTIAL.
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-CONNECTION-FILE-STATUS.
 
         DATA DIVISION.
        FILE SECTION.
@@ -225,7 +226,35 @@
         01 WS-DUPLICATE-REQUEST      PIC X VALUE "N".
         01 WS-REVERSE-REQUEST        PIC X VALUE "N".
         01 WS-ALREADY-CONNECTED      PIC X VALUE "N".
+       
+       *> week 5 - connection request management 
+       
+       01 WS-REJECTED-REQUEST PIC X VALUE "N".
 
+       01 WS-CONNECTION-FILE-STATUS PIC XX.
+       
+       01 WS-MR-ERROR PIC X VALUE "N".
+       
+       01 WS-MR-COUNT PIC 9(4) VALUE 0.
+       01 WS-MR-PENDING-COUNT PIC 9(4) VALUE 0.
+       01 WS-MR-SELECTED PIC 9(4) VALUE 0.
+       
+       01 WS-MR-I PIC 9(4) VALUE 0.
+       01 WS-MR-J PIC 9(4) VALUE 0.
+       01 WS-MR-K PIC 9(4) VALUE 0.
+       
+       *> in-memory copy of connection records
+       01 WS-MR-CONNECTIONS.
+          05 WS-MR-ENTRY OCCURS 1000 TIMES.
+             10 WS-MR-RECORD.
+                15 WS-MR-SENDER PIC X(20).
+                15 WS-MR-RECIPIENT PIC X(20).
+                15 WS-MR-STATUS PIC X.
+       
+       *> indexes of pending requests for current user
+       01 WS-MR-PENDING-TABLE.
+          05 WS-MR-PENDING-INDEX
+             PIC 9(4) OCCURS 1000 TIMES.
         PROCEDURE DIVISION.
 
 
@@ -850,6 +879,7 @@
             EXIT.
 
         COPY SendRequest.
+        COPY ManageRequests.
 
         LOAD-PROFILES.
 
@@ -1952,59 +1982,6 @@
             PERFORM WRITE-MESSAGE
 
             EXIT.
-
-VIEW-PENDING-REQUESTS.
-
-    SET CONNECTION-FILE-AVAILABLE TO TRUE
-    SET NO-PENDING-FOUND TO TRUE
-
-    MOVE "--- Pending Connection Requests ---"
-        TO WS-MESSAGE
-    PERFORM WRITE-MESSAGE
-
-    OPEN INPUT CONNECTION-FILE
-
-    PERFORM UNTIL CONNECTION-FILE-ENDED
-
-        READ CONNECTION-FILE
-            AT END
-                SET CONNECTION-FILE-ENDED TO TRUE
-
-            NOT AT END
-
-
-                IF FUNCTION TRIM(CONNECTION-RECIPIENT)
-                    = FUNCTION TRIM(WS-LOGIN-USERNAME)
-                    AND FUNCTION TRIM(CONNECTION-STATUS) = "P"
-
-                    SET PENDING-FOUND TO TRUE
-
-                    MOVE SPACES TO WS-MESSAGE
-                    STRING
-                        FUNCTION TRIM(CONNECTION-SENDER)
-                        INTO WS-MESSAGE
-                    END-STRING
-
-                    PERFORM WRITE-MESSAGE
-                END-IF
-
-        END-READ
-
-    END-PERFORM
-
-    CLOSE CONNECTION-FILE
-
-    IF NO-PENDING-FOUND
-        MOVE
-            "You have no pending connection requests at this time."
-            TO WS-MESSAGE
-        PERFORM WRITE-MESSAGE
-    END-IF
-
-    MOVE "-----------------------------------"
-        TO WS-MESSAGE
-    PERFORM WRITE-MESSAGE
-        EXIT.
 
     VIEW-NETWORK.
 
