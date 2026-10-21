@@ -138,7 +138,7 @@
             88 STAY-IN-SKILL-MENU VALUE "N".
 
         *> input mode: F = file (default), C = console
-        01 WS-INPUT-MODE PIC X VALUE 'C'.
+        01 WS-INPUT-MODE PIC X VALUE 'F'.
             88 FILE-INPUT-MODE VALUE 'F'.
             88 CONSOLE-INPUT-MODE VALUE 'C'.
 
