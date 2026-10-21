@@ -1,4 +1,0 @@
-user                searchtarget        C
-user2               user                R
-user2               searchtarget        R
-user                user2               C
