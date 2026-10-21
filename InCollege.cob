@@ -2035,17 +2035,26 @@
                             SET NETWORK-FOUND TO TRUE
 
                             MOVE SPACES TO WS-MESSAGE
-                            STRING
-                                "Connected with: "
-                                FUNCTION TRIM(
-                                    WS-PROF-FIRST-NAME(
-                                        WS-PROFILE-INDEX))
-                                " "
-                                FUNCTION TRIM(
-                                    WS-PROF-LAST-NAME(
-                                        WS-PROFILE-INDEX))
-                                INTO WS-MESSAGE
-                            END-STRING
+                           STRING
+                              "Connected with: "
+                              FUNCTION TRIM(
+                                  WS-PROF-FIRST-NAME(
+                                      WS-PROFILE-INDEX))
+                              " "
+                              FUNCTION TRIM(
+                                  WS-PROF-LAST-NAME(
+                                      WS-PROFILE-INDEX))
+                              " (University: "
+                              FUNCTION TRIM(
+                                  WS-PROF-UNIVERSITY(
+                                      WS-PROFILE-INDEX))
+                              ", Major: "
+                              FUNCTION TRIM(
+                                  WS-PROF-MAJOR(
+                                      WS-PROFILE-INDEX))
+                              ")"
+                              INTO WS-MESSAGE
+                                END-STRING
 
                             PERFORM WRITE-MESSAGE
                         END-IF
