@@ -19,36 +19,36 @@ You have successfully logged in
 Enter your choice:
 7
 --- Pending Connection Requests ---
-Request from: user3
+Request from: Jordan Smith
 1. Accept
 2. Reject
 Enter your choice (1 or 2):
 1
-Connection request from user3 accepted!
-Request from: user4
+Connection request from Jordan Smith accepted!
+Request from: Jim Anderson
 1. Accept
 2. Reject
 Enter your choice (1 or 2):
 1
-Connection request from user4 accepted!
-Request from: user5
+Connection request from Jim Anderson accepted!
+Request from: Bill Anderson
 1. Accept
 2. Reject
 Enter your choice (1 or 2):
 2
-Connection request from user5 rejected!
-Request from: user6
+Connection request from Bill Anderson rejected!
+Request from: Saul Anderson
 1. Accept
 2. Reject
 Enter your choice (1 or 2):
 2
-Connection request from user6 rejected!
-Request from: user7
+Connection request from Saul Anderson rejected!
+Request from: Walter Anderson
 1. Accept
 2. Reject
 Enter your choice (1 or 2):
 1
-Connection request from user7 accepted!
+Connection request from Walter Anderson accepted!
 -----------------------------------
 1. Edit or create profile
 2. View my profile
