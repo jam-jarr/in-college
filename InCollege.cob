@@ -87,7 +87,8 @@
        01 WS-INPUT-ENDED PIC X VALUE "N".
            88 INPUT-ENDED VALUE "Y".
            88 INPUT-AVAILABLE VALUE "N".
-
+       
+       01 WS-MESSAGE-POINTER BINARY-LONG.
 
        *> stores account information while the program runs
        01 WS-ACCOUNTS.
@@ -218,9 +219,12 @@
 
        01 WS-NETWORK-FOUND PIC X VALUE "N".
            88 NETWORK-FOUND VALUE "Y".
-            88 NO-NETWORK-FOUND VALUE "N".
+           88 NO-NETWORK-FOUND VALUE "N".
 
        01 WS-NETWORK-USERNAME PIC X(20).
+       01 WS-NETWORK-PROFILE-FOUND PIC X VALUE "N".
+       88 NETWORK-PROFILE-FOUND VALUE "Y".
+       88 NETWORK-PROFILE-NOT-FOUND VALUE "N".
 
         01 WS-CONNECTION-EOF          PIC X VALUE "N".
         01 WS-DUPLICATE-REQUEST      PIC X VALUE "N".
@@ -1986,87 +1990,160 @@
 
             EXIT.
 
-    VIEW-NETWORK.
-
-    SET CONNECTION-FILE-AVAILABLE TO TRUE
-    SET NO-NETWORK-FOUND TO TRUE
-
-    MOVE "--- Your Network ---" TO WS-MESSAGE
-    PERFORM WRITE-MESSAGE
-
-    OPEN INPUT CONNECTION-FILE
-
-    PERFORM UNTIL CONNECTION-FILE-ENDED
-
-        READ CONNECTION-FILE
-            AT END
-                SET CONNECTION-FILE-ENDED TO TRUE
-
-            NOT AT END
-                MOVE SPACES TO WS-NETWORK-USERNAME
-
-                IF FUNCTION TRIM(CONNECTION-STATUS) = "C"
-
-                    IF FUNCTION TRIM(CONNECTION-SENDER)
-                        = FUNCTION TRIM(WS-LOGIN-USERNAME)
-
-                        MOVE CONNECTION-RECIPIENT
-                            TO WS-NETWORK-USERNAME
-                    ELSE
-                        IF FUNCTION TRIM(CONNECTION-RECIPIENT)
-                            = FUNCTION TRIM(WS-LOGIN-USERNAME)
-
-                            MOVE CONNECTION-SENDER
-                                TO WS-NETWORK-USERNAME
-                        END-IF
-                    END-IF
-
-                END-IF
-
-                IF WS-NETWORK-USERNAME NOT = SPACES
-
-                    PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
-                        UNTIL WS-PROFILE-INDEX > WS-PROFILE-COUNT
-
-                        IF FUNCTION TRIM(
-                            WS-PROF-USERNAME(WS-PROFILE-INDEX))
-                            = FUNCTION TRIM(WS-NETWORK-USERNAME)
-
-                            SET NETWORK-FOUND TO TRUE
-
-                            MOVE SPACES TO WS-MESSAGE
-                            STRING
-                                "Connected with: "
-                                FUNCTION TRIM(
-                                    WS-PROF-FIRST-NAME(
-                                        WS-PROFILE-INDEX))
-                                " "
-                                FUNCTION TRIM(
-                                    WS-PROF-LAST-NAME(
-                                        WS-PROFILE-INDEX))
-                                INTO WS-MESSAGE
-                            END-STRING
-
-                            PERFORM WRITE-MESSAGE
-                        END-IF
-
-                    END-PERFORM
-
-                END-IF
-
-        END-READ
-
-    END-PERFORM
-
-    CLOSE CONNECTION-FILE
-
-    IF NO-NETWORK-FOUND
-        MOVE "You have no established connections."
-            TO WS-MESSAGE
-        PERFORM WRITE-MESSAGE
-    END-IF
-
-    MOVE "--------------------" TO WS-MESSAGE
-    PERFORM WRITE-MESSAGE
-
-    EXIT.
+       VIEW-NETWORK.
+       
+           SET CONNECTION-FILE-AVAILABLE TO TRUE
+           SET NO-NETWORK-FOUND TO TRUE
+       
+           MOVE "--- Your Network ---" TO WS-MESSAGE
+           PERFORM WRITE-MESSAGE
+       
+           OPEN INPUT CONNECTION-FILE
+       
+           PERFORM UNTIL CONNECTION-FILE-ENDED
+       
+               READ CONNECTION-FILE
+                   AT END
+                       SET CONNECTION-FILE-ENDED TO TRUE
+       
+                   NOT AT END
+                       MOVE SPACES TO WS-NETWORK-USERNAME
+       
+                       IF CONNECTION-STATUS = "C"
+       
+                           IF CONNECTION-SENDER =
+                               WS-LOGIN-USERNAME
+       
+                               MOVE CONNECTION-RECIPIENT
+                                   TO WS-NETWORK-USERNAME
+       
+                           ELSE
+                               IF CONNECTION-RECIPIENT =
+                                   WS-LOGIN-USERNAME
+       
+                                   MOVE CONNECTION-SENDER
+                                       TO WS-NETWORK-USERNAME
+                               END-IF
+                           END-IF
+       
+                       END-IF
+       
+                       IF WS-NETWORK-USERNAME NOT = SPACES
+       
+                           SET NETWORK-FOUND TO TRUE
+       
+                           MOVE "N"
+                               TO WS-NETWORK-PROFILE-FOUND
+       
+                           PERFORM VARYING WS-PROFILE-INDEX
+                               FROM 1 BY 1
+                               UNTIL WS-PROFILE-INDEX >
+                                   WS-PROFILE-COUNT
+                                   OR WS-NETWORK-PROFILE-FOUND = "Y"
+       
+                               IF WS-PROF-USERNAME(
+                                   WS-PROFILE-INDEX) =
+                                   WS-NETWORK-USERNAME
+       
+                                   MOVE "Y"
+                                       TO WS-NETWORK-PROFILE-FOUND
+       
+                                   MOVE SPACES TO WS-MESSAGE
+       
+                                   IF WS-PROF-FIRST-NAME(
+                                       WS-PROFILE-INDEX)
+                                       NOT = SPACES
+                                       AND WS-PROF-LAST-NAME(
+                                       WS-PROFILE-INDEX)
+                                       NOT = SPACES
+       
+                                       STRING
+                                           "Connected with: "
+                                           FUNCTION TRIM(
+                                               WS-PROF-FIRST-NAME(
+                                                   WS-PROFILE-INDEX))
+                                           " "
+                                           FUNCTION TRIM(
+                                               WS-PROF-LAST-NAME(
+                                                   WS-PROFILE-INDEX))
+                                           INTO WS-MESSAGE
+                                       END-STRING
+       
+                                   ELSE
+       
+                                       STRING
+                                           "Connected with: "
+                                           FUNCTION TRIM(
+                                               WS-NETWORK-USERNAME)
+                                           INTO WS-MESSAGE
+                                       END-STRING
+       
+                                   END-IF
+       
+                                   IF WS-PROF-UNIVERSITY(
+                                       WS-PROFILE-INDEX)
+                                       NOT = SPACES
+                                       OR WS-PROF-MAJOR(
+                                       WS-PROFILE-INDEX)
+                                       NOT = SPACES
+       
+                                       COMPUTE WS-MESSAGE-POINTER =
+                                           FUNCTION LENGTH(
+                                               FUNCTION TRIM(WS-MESSAGE TRAILING)) + 1
+                                              
+                                       STRING
+                                           " (University: "
+                                           FUNCTION TRIM(
+                                               WS-PROF-UNIVERSITY(
+                                                   WS-PROFILE-INDEX))
+                                           ", Major: "
+                                           FUNCTION TRIM(
+                                               WS-PROF-MAJOR(
+                                                   WS-PROFILE-INDEX))
+                                           ")"
+                                           INTO WS-MESSAGE
+                                           WITH POINTER
+                                               WS-MESSAGE-POINTER
+                                       END-STRING
+       
+                                   END-IF
+       
+                                   PERFORM WRITE-MESSAGE
+       
+                               END-IF
+       
+                           END-PERFORM
+       
+                           IF WS-NETWORK-PROFILE-FOUND = "N"
+       
+                               MOVE SPACES TO WS-MESSAGE
+       
+                               STRING
+                                   "Connected with: "
+                                   FUNCTION TRIM(
+                                       WS-NETWORK-USERNAME)
+                                   INTO WS-MESSAGE
+                               END-STRING
+       
+                               PERFORM WRITE-MESSAGE
+       
+                           END-IF
+       
+                       END-IF
+       
+               END-READ
+       
+           END-PERFORM
+       
+           CLOSE CONNECTION-FILE
+       
+           IF NO-NETWORK-FOUND
+               MOVE "You have no established connections."
+                   TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+           END-IF
+       
+           MOVE "--------------------" TO WS-MESSAGE
+           PERFORM WRITE-MESSAGE
+       
+           EXIT.
