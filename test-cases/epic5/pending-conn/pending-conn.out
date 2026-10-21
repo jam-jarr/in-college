@@ -1,0 +1,77 @@
+Welcome to InCollege!
+1. Log In
+2. Create New Account
+Enter your choice:
+1
+Please enter your username:
+user
+Please enter your password:
+Password1!
+You have successfully logged in
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+7. View My Pending Connection Requests
+8. View My Network
+Enter your choice:
+7
+--- Pending Connection Requests ---
+Request from: user3
+1. Accept
+2. Reject
+Enter your choice (1 or 2):
+1
+Connection request from user3 accepted!
+Request from: user4
+1. Accept
+2. Reject
+Enter your choice (1 or 2):
+1
+Connection request from user4 accepted!
+Request from: user5
+1. Accept
+2. Reject
+Enter your choice (1 or 2):
+2
+Connection request from user5 rejected!
+Request from: user6
+1. Accept
+2. Reject
+Enter your choice (1 or 2):
+2
+Connection request from user6 rejected!
+Request from: user7
+1. Accept
+2. Reject
+Enter your choice (1 or 2):
+1
+Connection request from user7 accepted!
+-----------------------------------
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+7. View My Pending Connection Requests
+8. View My Network
+Enter your choice:
+8
+--- Your Network ---
+Connected with: Jordan Smith
+Connected with: Jim Anderson
+Connected with: Walter Anderson
+--------------------
+1. Edit or create profile
+2. View my profile
+3. Search for a job
+4. Find someone you know
+5. Learn a new skill
+6. Logout
+7. View My Pending Connection Requests
+8. View My Network
+Enter your choice:
+6
