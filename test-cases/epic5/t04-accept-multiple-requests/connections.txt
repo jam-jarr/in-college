@@ -1,0 +1,2 @@
+user                searchtarget        P
+user2               searchtarget        P

@@ -1,0 +1,4 @@
+user                searchtarget        C
+user2               user                R
+user2               searchtarget        C
+user                user2               C
