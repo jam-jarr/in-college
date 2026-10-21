@@ -138,7 +138,7 @@
             88 STAY-IN-SKILL-MENU VALUE "N".
 
         *> input mode: F = file (default), C = console
-        01 WS-INPUT-MODE PIC X VALUE 'F'.
+        01 WS-INPUT-MODE PIC X VALUE 'C'.
             88 FILE-INPUT-MODE VALUE 'F'.
             88 CONSOLE-INPUT-MODE VALUE 'C'.
 
@@ -229,6 +229,9 @@
        
        *> week 5 - connection request management 
        
+       01 WS-MR-DISPLAY-NAME PIC X(50).
+       01 WS-MR-PROFILE-FOUND PIC X VALUE "N".
+
        01 WS-REJECTED-REQUEST PIC X VALUE "N".
 
        01 WS-CONNECTION-FILE-STATUS PIC XX.
