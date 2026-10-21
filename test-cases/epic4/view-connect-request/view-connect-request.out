@@ -15,10 +15,16 @@ You have successfully logged in
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
 7
 --- Pending Connection Requests ---
-user
+Request from: user
+1. Accept
+2. Reject
+Enter your choice (1 or 2):
+x
+Invalid selection; request remains pending.
 -----------------------------------
 1. Edit or create profile
 2. View my profile
@@ -27,6 +33,7 @@ user
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
 4
 Enter the full name of the person you are looking for:
@@ -74,5 +81,6 @@ This user has already sent you a connection request.
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
 6

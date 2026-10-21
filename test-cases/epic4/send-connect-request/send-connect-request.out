@@ -15,6 +15,7 @@ You have successfully logged in
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
 4
 Enter the full name of the person you are looking for:
@@ -37,6 +38,7 @@ Connection request sent to Jordan Smith.
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
 4
 Enter the full name of the person you are looking for:
@@ -49,6 +51,7 @@ No one by that name could be found.
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
 4
 Enter the full name of the person you are looking for:
@@ -71,5 +74,6 @@ You already have a pending connection request to this user.
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
 6
