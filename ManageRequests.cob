@@ -83,10 +83,45 @@
            EXIT.
 
        MR-PROMPT-REQUEST.
+           *> efault to username if no profile exists
+           MOVE WS-MR-SENDER(WS-MR-SELECTED)
+                TO WS-MR-DISPLAY-NAME
+        
+           MOVE "N" TO WS-MR-PROFILE-FOUND
+        
+           *> search loaded profiles for the sender.
+           PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
+                UNTIL WS-PROFILE-INDEX > WS-PROFILE-COUNT
+                    OR WS-MR-PROFILE-FOUND = "Y"
+        
+                IF WS-PROF-USERNAME(WS-PROFILE-INDEX) =
+                    WS-MR-SENDER(WS-MR-SELECTED)
+        
+                    IF WS-PROF-FIRST-NAME(WS-PROFILE-INDEX)
+                        NOT = SPACES
+                        AND WS-PROF-LAST-NAME(WS-PROFILE-INDEX)
+                        NOT = SPACES
+        
+                        MOVE SPACES TO WS-MR-DISPLAY-NAME
+        
+                        STRING
+                            FUNCTION TRIM(
+                                WS-PROF-FIRST-NAME(WS-PROFILE-INDEX))
+                            " "
+                            FUNCTION TRIM(
+                                WS-PROF-LAST-NAME(WS-PROFILE-INDEX))
+                            INTO WS-MR-DISPLAY-NAME
+                        END-STRING
+        
+                        MOVE "Y" TO WS-MR-PROFILE-FOUND
+                    END-IF
+                END-IF
+           END-PERFORM
+        
            MOVE SPACES TO WS-MESSAGE
            STRING "Request from: "
-               FUNCTION TRIM(WS-MR-SENDER(WS-MR-SELECTED))
-               INTO WS-MESSAGE
+                FUNCTION TRIM(WS-MR-DISPLAY-NAME)
+                INTO WS-MESSAGE
            END-STRING
            PERFORM WRITE-MESSAGE
 
@@ -110,7 +145,7 @@
                        MOVE SPACES TO WS-MESSAGE
                        STRING "Connection request from "
                            FUNCTION TRIM(
-                               WS-MR-SENDER(WS-MR-SELECTED))
+                               WS-MR-DISPLAY-NAME)
                            " accepted!"
                            INTO WS-MESSAGE
                        END-STRING
@@ -124,7 +159,7 @@
                        MOVE SPACES TO WS-MESSAGE
                        STRING "Connection request from "
                            FUNCTION TRIM(
-                               WS-MR-SENDER(WS-MR-SELECTED))
+                               WS-MR-DISPLAY-NAME)
                            " rejected!"
                            INTO WS-MESSAGE
                        END-STRING
