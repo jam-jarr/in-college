@@ -138,7 +138,7 @@
             88 STAY-IN-SKILL-MENU VALUE "N".
 
         *> input mode: F = file (default), C = console
-        01 WS-INPUT-MODE PIC X VALUE 'F'.
+        01 WS-INPUT-MODE PIC X VALUE 'C'.
             88 FILE-INPUT-MODE VALUE 'F'.
             88 CONSOLE-INPUT-MODE VALUE 'C'.
 
@@ -258,6 +258,25 @@
        01 WS-MR-PENDING-TABLE.
           05 WS-MR-PENDING-INDEX
              PIC 9(4) OCCURS 1000 TIMES.
+       
+       *> week 6 - job posting
+
+       01 WS-JOB-BACK-SELECTED PIC X VALUE "N".
+       01 WS-JOB-CHOICE PIC X.
+
+       *> job posting information
+       01 WS-JOB-TITLE PIC X(50).
+       01 WS-JOB-DESCRIPTION PIC X(200).
+       01 WS-JOB-EMPLOYER PIC X(50).
+       01 WS-JOB-LOCATION PIC X(50).
+       01 WS-JOB-SALARY PIC X(40).
+
+       *> input validation
+       01 WS-JOB-FIELD-LENGTH PIC 9(3).
+       01 WS-JOB-MAX-LENGTH PIC 9(3).
+       01 WS-JOB-VALID PIC X VALUE "N".
+       01 WS-JOB-INPUT-COMPLETE PIC X VALUE "N".
+
         PROCEDURE DIVISION.
 
 
@@ -671,12 +690,7 @@
                         PERFORM VIEW-PROFILE
 
                     WHEN "3"
-                        STRING
-                            "Job search/internship is "
-                            "under construction."
-                            INTO WS-MESSAGE
-                        END-STRING
-                        PERFORM WRITE-MESSAGE
+                        PERFORM JOB-MENU
 
                     WHEN "4"
                         PERFORM SEARCH-USERS
@@ -883,6 +897,7 @@
 
         COPY SendRequest.
         COPY ManageRequests.
+        COPY Jobs.
 
         LOAD-PROFILES.
 

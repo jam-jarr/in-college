@@ -15,33 +15,56 @@ You have successfully logged in
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
-7
---- Pending Connection Requests ---
-You have no pending connection requests at this time.
------------------------------------
-1. Edit or create profile
-2. View my profile
-3. Search for a job
-4. Find someone you know
-5. Learn a new skill
-6. Logout
-7. View My Pending Connection Requests
+3
+--- Job Search/Internship Menu ---
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Back to Main Menu
 Enter your choice:
-4
-Enter the full name of the person you are looking for:
-Jordan Smith
-==== Profile for Jordan Smith
-Name:        Jordan Smith
-University:  a
-Major:       b
-Graduation:  2030
-================================
-1. Send Connection Request
-2. Back to Main Menu
+2
+Browse Jobs/Internships is under construction.
+--- Job Search/Internship Menu ---
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Back to Main Menu
 Enter your choice:
 1
-You already have a pending connection request to this user.
+--- Post a New Job/Internship ---
+Enter Job Title:
+
+This field is required.
+This field is required.
+
+This field is required.
+This field is required.
+
+This field is required.
+This field is required.
+Software Engineer
+Enter Description (max 200 chars):
+Professional programmer and rocket league player
+Enter Employer Name:
+University of South Florida
+Enter Location:
+Tampa, Florida
+Enter Salary (optional, enter 'NONE' to skip):
+
+Job details captured successfully.
+--- Job Search/Internship Menu ---
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Back to Main Menu
+Enter your choice:
+2
+Browse Jobs/Internships is under construction.
+--- Job Search/Internship Menu ---
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Back to Main Menu
+Enter your choice:
+3
 1. Edit or create profile
 2. View my profile
 3. Search for a job
@@ -49,39 +72,5 @@ You already have a pending connection request to this user.
 5. Learn a new skill
 6. Logout
 7. View My Pending Connection Requests
+8. View My Network
 Enter your choice:
-4
-Enter the full name of the person you are looking for:
-Nonexistent user
-No one by that name could be found.
-1. Edit or create profile
-2. View my profile
-3. Search for a job
-4. Find someone you know
-5. Learn a new skill
-6. Logout
-7. View My Pending Connection Requests
-Enter your choice:
-4
-Enter the full name of the person you are looking for:
-Jordan Smith
-==== Profile for Jordan Smith
-Name:        Jordan Smith
-University:  a
-Major:       b
-Graduation:  2030
-================================
-1. Send Connection Request
-2. Back to Main Menu
-Enter your choice:
-1
-You already have a pending connection request to this user.
-1. Edit or create profile
-2. View my profile
-3. Search for a job
-4. Find someone you know
-5. Learn a new skill
-6. Logout
-7. View My Pending Connection Requests
-Enter your choice:
-6
