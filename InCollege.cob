@@ -32,6 +32,17 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-CONNECTION-FILE-STATUS.
 
+           *> Epic 6 persistent job postings and user save events.
+           SELECT OPTIONAL JOB-DATA-FILE
+               ASSIGN TO "jobs.txt"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-JOB-FILE-STATUS.
+
+           SELECT OPTIONAL SAVE-DATA-FILE
+               ASSIGN TO "saved-jobs.txt"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-SAVE-FILE-STATUS.
+
         DATA DIVISION.
        FILE SECTION.
 
@@ -77,6 +88,24 @@
             05 CONNECTION-SENDER       PIC X(20).
             05 CONNECTION-RECIPIENT    PIC X(20).
             05 CONNECTION-STATUS       PIC X.
+
+       *> Each job record has a unique six-digit ID and poster.
+       FD JOB-DATA-FILE.
+       01 JOB-DATA-RECORD.
+           05 JOB-RECORD-ID           PIC 9(6).
+           05 JOB-RECORD-POSTER       PIC X(20).
+           05 JOB-RECORD-TITLE        PIC X(50).
+           05 JOB-RECORD-DESCRIPTION  PIC X(200).
+           05 JOB-RECORD-EMPLOYER     PIC X(50).
+           05 JOB-RECORD-LOCATION     PIC X(50).
+           05 JOB-RECORD-SALARY       PIC X(40).
+
+       *> Per-user saved / unsaved / applied event record.
+       FD SAVE-DATA-FILE.
+       01 SAVE-DATA-RECORD.
+           05 SAVE-RECORD-USER        PIC X(20).
+           05 SAVE-RECORD-JOB-ID      PIC 9(6).
+           05 SAVE-RECORD-EVENT       PIC X.
 
         WORKING-STORAGE SECTION.
 
@@ -138,7 +167,7 @@
             88 STAY-IN-SKILL-MENU VALUE "N".
 
         *> input mode: F = file (default), C = console
-        01 WS-INPUT-MODE PIC X VALUE 'C'.
+        01 WS-INPUT-MODE PIC X VALUE 'F'.
             88 FILE-INPUT-MODE VALUE 'F'.
             88 CONSOLE-INPUT-MODE VALUE 'C'.
 
@@ -226,26 +255,26 @@
         01 WS-DUPLICATE-REQUEST      PIC X VALUE "N".
         01 WS-REVERSE-REQUEST        PIC X VALUE "N".
         01 WS-ALREADY-CONNECTED      PIC X VALUE "N".
-       
-       *> week 5 - connection request management 
-       
+
+       *> week 5 - connection request management
+
        01 WS-MR-DISPLAY-NAME PIC X(50).
        01 WS-MR-PROFILE-FOUND PIC X VALUE "N".
 
        01 WS-REJECTED-REQUEST PIC X VALUE "N".
 
        01 WS-CONNECTION-FILE-STATUS PIC XX.
-       
+
        01 WS-MR-ERROR PIC X VALUE "N".
-       
+
        01 WS-MR-COUNT PIC 9(4) VALUE 0.
        01 WS-MR-PENDING-COUNT PIC 9(4) VALUE 0.
        01 WS-MR-SELECTED PIC 9(4) VALUE 0.
-       
+
        01 WS-MR-I PIC 9(4) VALUE 0.
        01 WS-MR-J PIC 9(4) VALUE 0.
        01 WS-MR-K PIC 9(4) VALUE 0.
-       
+
        *> in-memory copy of connection records
        01 WS-MR-CONNECTIONS.
           05 WS-MR-ENTRY OCCURS 1000 TIMES.
@@ -253,12 +282,12 @@
                 15 WS-MR-SENDER PIC X(20).
                 15 WS-MR-RECIPIENT PIC X(20).
                 15 WS-MR-STATUS PIC X.
-       
+
        *> indexes of pending requests for current user
        01 WS-MR-PENDING-TABLE.
           05 WS-MR-PENDING-INDEX
              PIC 9(4) OCCURS 1000 TIMES.
-       
+
        *> week 6 - job posting
 
        01 WS-JOB-BACK-SELECTED PIC X VALUE "N".
@@ -276,6 +305,26 @@
        01 WS-JOB-MAX-LENGTH PIC 9(3).
        01 WS-JOB-VALID PIC X VALUE "N".
        01 WS-JOB-INPUT-COMPLETE PIC X VALUE "N".
+
+       *> Epic 6 Developer #1 working storage.
+       01 WS-JOB-FILE-STATUS          PIC XX.
+       01 WS-SAVE-FILE-STATUS         PIC XX.
+       01 WS-JOB-READ-ENDED          PIC X VALUE "N".
+       01 WS-SAVE-READ-ENDED         PIC X VALUE "N".
+       01 WS-NEXT-JOB-ID             PIC 9(7) VALUE 1.
+       01 WS-LOOKUP-JOB-ID           PIC 9(6) VALUE 0.
+       01 WS-JOB-FOUND               PIC X VALUE "N".
+       01 WS-JOB-ID-TEXT             PIC X(6).
+       01 WS-JOB-ID-LENGTH           PIC 9(3) VALUE 0.
+       01 WS-JOB-ID-INDEX            PIC 9 VALUE 0.
+       01 WS-JOB-ID-VALID            PIC X VALUE "N".
+       01 WS-SAVED-MENU-BACK         PIC X VALUE "N".
+       01 WS-REQUESTED-SAVE-EVENT    PIC X.
+       01 WS-DISPLAY-SAVE-KIND       PIC X.
+       01 WS-JOB-IS-SAVED            PIC X VALUE "N".
+       01 WS-JOB-IS-APPLIED          PIC X VALUE "N".
+       01 WS-SAVE-IO-ERROR           PIC X VALUE "N".
+       01 WS-MY-JOB-COUNT            PIC 9(6) VALUE 0.
 
         PROCEDURE DIVISION.
 
@@ -898,6 +947,8 @@
         COPY SendRequest.
         COPY ManageRequests.
         COPY Jobs.
+        COPY JobStorage.
+        COPY SavedJobs.
 
         LOAD-PROFILES.
 
