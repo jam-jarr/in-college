@@ -19,12 +19,14 @@
             *> set up persistent account storage
             SELECT OPTIONAL ACCOUNT-FILE
                 ASSIGN TO "accounts.txt"
-                ORGANIZATION IS LINE SEQUENTIAL.
+                ORGANIZATION IS LINE SEQUENTIAL
+                FILE STATUS IS WS-ACCOUNT-FILE-STATUS.
 
             *> set up persistent profile storage
             SELECT OPTIONAL PROFILE-FILE
                 ASSIGN TO "profiles.txt"
-                ORGANIZATION IS LINE SEQUENTIAL.
+                ORGANIZATION IS LINE SEQUENTIAL
+                FILE STATUS IS WS-PROFILE-FILE-STATUS.
 
            *> Epic 4 - persistent connection request storage
            SELECT OPTIONAL CONNECTION-FILE
@@ -134,6 +136,8 @@
        01 WS-ACCOUNT-FILE-ENDED PIC X VALUE "N".
            88 ACCOUNT-FILE-ENDED VALUE "Y".
            88 ACCOUNT-FILE-AVAILABLE VALUE "N".
+       01 WS-ACCOUNT-FILE-STATUS PIC XX.
+       01 WS-PROFILE-FILE-STATUS PIC XX.
 
        01 WS-PASSWORD-LENGTH PIC 99 VALUE 0.
        01 WS-CHAR-INDEX PIC 99 VALUE 0.
@@ -335,6 +339,7 @@
            *> open the files for reading and writing
            OPEN INPUT INPUT-FILE
            OPEN OUTPUT OUTPUT-FILE
+           PERFORM INITIALIZE-PERSISTENCE-FILES
 
            *> load saved accounts
             OPEN INPUT ACCOUNT-FILE
@@ -394,6 +399,51 @@
            CLOSE OUTPUT-FILE
 
            STOP RUN.
+
+       INITIALIZE-PERSISTENCE-FILES.
+           *> EXTEND creates each missing line-sequential file without
+           *> changing records in files that already exist.
+           OPEN EXTEND ACCOUNT-FILE
+           IF WS-ACCOUNT-FILE-STATUS NOT = "00"
+               AND WS-ACCOUNT-FILE-STATUS NOT = "05"
+               DISPLAY "Unable to initialize accounts.txt."
+               STOP RUN
+           END-IF
+           CLOSE ACCOUNT-FILE
+
+           OPEN EXTEND PROFILE-FILE
+           IF WS-PROFILE-FILE-STATUS NOT = "00"
+               AND WS-PROFILE-FILE-STATUS NOT = "05"
+               DISPLAY "Unable to initialize profiles.txt."
+               STOP RUN
+           END-IF
+           CLOSE PROFILE-FILE
+
+           OPEN EXTEND CONNECTION-FILE
+           IF WS-CONNECTION-FILE-STATUS NOT = "00"
+               AND WS-CONNECTION-FILE-STATUS NOT = "05"
+               DISPLAY "Unable to initialize connections.txt."
+               STOP RUN
+           END-IF
+           CLOSE CONNECTION-FILE
+
+           OPEN EXTEND JOB-DATA-FILE
+           IF WS-JOB-FILE-STATUS NOT = "00"
+               AND WS-JOB-FILE-STATUS NOT = "05"
+               DISPLAY "Unable to initialize jobs.txt."
+               STOP RUN
+           END-IF
+           CLOSE JOB-DATA-FILE
+
+           OPEN EXTEND SAVE-DATA-FILE
+           IF WS-SAVE-FILE-STATUS NOT = "00"
+               AND WS-SAVE-FILE-STATUS NOT = "05"
+               DISPLAY "Unable to initialize saved-jobs.txt."
+               STOP RUN
+           END-IF
+           CLOSE SAVE-DATA-FILE
+           EXIT.
+
        WRITE-MESSAGE.
 
            *> display the message to the console
