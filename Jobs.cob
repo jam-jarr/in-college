@@ -160,39 +160,45 @@
 
        READ-REQUIRED-JOB-FIELD.
 
-           MOVE "N" TO WS-JOB-VALID
-
-           PERFORM UNTIL WS-JOB-VALID = "Y"
-               OR INPUT-ENDED
-
-               PERFORM WRITE-MESSAGE
-               PERFORM READ-USER-INPUT
-
-               IF INPUT-ENDED
-                   EXIT PERFORM
-               END-IF
-
-               MOVE FUNCTION LENGTH(
-                   FUNCTION TRIM(WS-USER-INPUT)
-               ) TO WS-JOB-FIELD-LENGTH
-
-               EVALUATE TRUE
-
-                   WHEN WS-JOB-FIELD-LENGTH = 0
-                       MOVE "This field is required."
-                           TO WS-MESSAGE
-                       PERFORM WRITE-MESSAGE
-
-                   WHEN WS-JOB-FIELD-LENGTH > WS-JOB-MAX-LENGTH
-                       MOVE "Input exceeds the maximum length."
-                           TO WS-MESSAGE
-                       PERFORM WRITE-MESSAGE
-
-                   WHEN OTHER
-                       MOVE "Y" TO WS-JOB-VALID
-
-               END-EVALUATE
-
-           END-PERFORM
-
-           EXIT.
+          MOVE "N" TO WS-JOB-VALID
+      
+          *> Preserve the original field prompt
+          MOVE WS-MESSAGE TO WS-JOB-PROMPT
+      
+          PERFORM UNTIL WS-JOB-VALID = "Y"
+              OR INPUT-ENDED
+      
+              *> Redisplay the original prompt
+              MOVE WS-JOB-PROMPT TO WS-MESSAGE
+              PERFORM WRITE-MESSAGE
+      
+              PERFORM READ-USER-INPUT
+      
+              IF INPUT-ENDED
+                  EXIT PERFORM
+              END-IF
+      
+              MOVE FUNCTION LENGTH(
+                  FUNCTION TRIM(WS-USER-INPUT)
+              ) TO WS-JOB-FIELD-LENGTH
+      
+              EVALUATE TRUE
+      
+                  WHEN WS-JOB-FIELD-LENGTH = 0
+                      MOVE "This field is required."
+                          TO WS-MESSAGE
+                      PERFORM WRITE-MESSAGE
+      
+                  WHEN WS-JOB-FIELD-LENGTH > WS-JOB-MAX-LENGTH
+                      MOVE "Input exceeds the maximum length."
+                          TO WS-MESSAGE
+                      PERFORM WRITE-MESSAGE
+      
+                  WHEN OTHER
+                      MOVE "Y" TO WS-JOB-VALID
+      
+              END-EVALUATE
+      
+          END-PERFORM
+      
+          EXIT.

@@ -325,6 +325,7 @@
        01 WS-JOB-IS-APPLIED          PIC X VALUE "N".
        01 WS-SAVE-IO-ERROR           PIC X VALUE "N".
        01 WS-MY-JOB-COUNT            PIC 9(6) VALUE 0.
+       01 WS-JOB-PROMPT PIC X(100).
 
         PROCEDURE DIVISION.
 
