@@ -1,0 +1,18 @@
+1
+user
+Password1!
+3
+1
+Software Developer Intern
+Develop web applications
+Google
+Remote
+$25/hour
+1
+Data Analyst Intern
+Analyze business data
+Microsoft
+New York
+$30/hour
+3
+6

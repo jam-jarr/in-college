@@ -22,40 +22,26 @@ Enter your choice:
 1. Post a Job/Internship
 2. Browse Jobs/Internships
 3. Back to Main Menu
-Enter your choice:
-2
-Browse Jobs/Internships is under construction.
---- Job Search/Internship Menu ---
-1. Post a Job/Internship
-2. Browse Jobs/Internships
-3. Back to Main Menu
+4. Saved/Applied Jobs
 Enter your choice:
 1
 --- Post a New Job/Internship ---
 Enter Job Title:
-
-This field is required.
-This field is required.
-
-This field is required.
-This field is required.
-
-This field is required.
-This field is required.
 Software Engineer
 Enter Description (max 200 chars):
-Professional programmer and rocket league player
+professional programmer and rocket league player
 Enter Employer Name:
-University of South Florida
+Publix Supermarkets
 Enter Location:
 Tampa, Florida
 Enter Salary (optional, enter 'NONE' to skip):
-
-Job details captured successfully.
+10
+Job posted successfully! ID: 000002
 --- Job Search/Internship Menu ---
 1. Post a Job/Internship
 2. Browse Jobs/Internships
 3. Back to Main Menu
+4. Saved/Applied Jobs
 Enter your choice:
 2
 Browse Jobs/Internships is under construction.
@@ -63,6 +49,7 @@ Browse Jobs/Internships is under construction.
 1. Post a Job/Internship
 2. Browse Jobs/Internships
 3. Back to Main Menu
+4. Saved/Applied Jobs
 Enter your choice:
 3
 1. Edit or create profile
@@ -74,3 +61,4 @@ Enter your choice:
 7. View My Pending Connection Requests
 8. View My Network
 Enter your choice:
+6
