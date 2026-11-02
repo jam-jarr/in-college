@@ -107,3 +107,32 @@ The program reads menu selections and job details from InCollege-Input.txt and d
 For example, after logging in, use menu option 3 to open Job Search/Internship, option 1 to post a job, and option 3 to return to the main menu.
 
 The Browse Jobs/Internships option remains under construction for Epic 6.
+
+## Week 7 - Developer #2: My Applications Report
+
+While logged in, open **Job Search/Internship** (main menu option 3), then
+**5. View My Applications**. The report displays each applied job's ID, title,
+employer and location, and a total count. With no applications it displays
+"No applications found." and "Total Applications: 0".
+
+Applications reuse existing `saved-jobs.txt` records, with a 20-character
+username, six-digit job ID and one-character `A` event. The job must exist
+in `jobs.txt` to appear. Each applied job is counted only once.
+
+All report messages use `WRITE-MESSAGE` to display on the console and write
+to `InCollege-Output.txt`. Normal input comes from `InCollege-Input.txt`.
+
+Example input (requires account `user` with password `Password1!`):
+
+```text
+1
+user
+Password1!
+3
+5
+3
+6
+```
+
+After building with GnuCOBOL, run `python run_report_tests.py --repo .` for
+report smoke tests. The browse/apply flow is developed separately by Dev #1.
