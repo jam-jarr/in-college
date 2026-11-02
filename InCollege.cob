@@ -329,6 +329,10 @@
        01 WS-JOB-IS-APPLIED          PIC X VALUE "N".
        01 WS-SAVE-IO-ERROR           PIC X VALUE "N".
        01 WS-MY-JOB-COUNT            PIC 9(6) VALUE 0.
+       *> Week 7 Developer #2: application report counter.
+       01 WS-REPORT-COUNT         PIC 9(6) VALUE 0.
+       01 WS-REPORT-COUNT-DISPLAY PIC Z(5)9.
+
        01 WS-JOB-PROMPT PIC X(100).
 
         PROCEDURE DIVISION.
@@ -1000,6 +1004,7 @@
         COPY Jobs.
         COPY JobStorage.
         COPY SavedJobs.
+        COPY ViewApplications.
 
         LOAD-PROFILES.
 

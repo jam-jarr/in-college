@@ -21,6 +21,9 @@
                MOVE "4. Saved/Applied Jobs" TO WS-MESSAGE
                PERFORM WRITE-MESSAGE
 
+               MOVE "5. View My Applications" TO WS-MESSAGE
+               PERFORM WRITE-MESSAGE
+
                MOVE "Enter your choice:" TO WS-MESSAGE
                PERFORM WRITE-MESSAGE
 
@@ -48,6 +51,9 @@
 
                    WHEN "4"
                        PERFORM SAVED-JOBS-MENU
+
+                   WHEN "5"
+                       PERFORM VIEW-MY-APPLICATIONS
 
                    WHEN OTHER
                        MOVE "Invalid selection." TO WS-MESSAGE
