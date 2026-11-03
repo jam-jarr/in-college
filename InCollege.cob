@@ -329,6 +329,19 @@
        01 WS-JOB-IS-APPLIED          PIC X VALUE "N".
        01 WS-SAVE-IO-ERROR           PIC X VALUE "N".
        01 WS-MY-JOB-COUNT            PIC 9(6) VALUE 0.
+       *> browse jobs listing
+       01 WS-BROWSE-COUNT              PIC 9(6) VALUE 0.
+       01 WS-BROWSE-COUNT-DISPLAY      PIC Z(5)9.
+       01 WS-BROWSE-BACK               PIC X VALUE "N".
+       01 WS-DETAIL-DONE               PIC X VALUE "N".
+       01 WS-BROWSE-INDEX              PIC 9(4).
+       01 WS-SELECTED-JOB-ID           PIC 9(6).
+       01 WS-BROWSE-TABLE.
+          05 WS-BROWSE-ENTRY OCCURS 1000 TIMES.
+             10 WS-BROWSE-JOB-ID       PIC 9(6).
+             10 WS-BROWSE-JOB-TITLE    PIC X(50).
+             10 WS-BROWSE-JOB-EMPLOYER PIC X(50).
+             10 WS-BROWSE-JOB-LOCATION PIC X(50).
        *> Week 7 Developer #2: application report counter.
        01 WS-REPORT-COUNT         PIC 9(6) VALUE 0.
        01 WS-REPORT-COUNT-DISPLAY PIC Z(5)9.

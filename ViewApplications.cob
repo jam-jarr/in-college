@@ -65,12 +65,6 @@
 
        WRITE-APPLICATION-DETAIL.
            MOVE SPACES TO WS-MESSAGE
-           STRING "Job ID: " JOB-RECORD-ID
-               INTO WS-MESSAGE
-           END-STRING
-           PERFORM WRITE-MESSAGE
-
-           MOVE SPACES TO WS-MESSAGE
            STRING "Job Title: " FUNCTION TRIM(JOB-RECORD-TITLE)
                INTO WS-MESSAGE
            END-STRING
