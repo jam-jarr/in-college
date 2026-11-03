@@ -322,13 +322,10 @@
        01 WS-JOB-ID-LENGTH           PIC 9(3) VALUE 0.
        01 WS-JOB-ID-INDEX            PIC 9 VALUE 0.
        01 WS-JOB-ID-VALID            PIC X VALUE "N".
-       01 WS-SAVED-MENU-BACK         PIC X VALUE "N".
        01 WS-REQUESTED-SAVE-EVENT    PIC X.
-       01 WS-DISPLAY-SAVE-KIND       PIC X.
        01 WS-JOB-IS-SAVED            PIC X VALUE "N".
        01 WS-JOB-IS-APPLIED          PIC X VALUE "N".
        01 WS-SAVE-IO-ERROR           PIC X VALUE "N".
-       01 WS-MY-JOB-COUNT            PIC 9(6) VALUE 0.
        *> browse jobs listing
        01 WS-BROWSE-COUNT              PIC 9(6) VALUE 0.
        01 WS-BROWSE-COUNT-DISPLAY      PIC Z(5)9.
@@ -780,13 +777,13 @@
                 MOVE "5. Learn a new skill" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "6. Logout" TO WS-MESSAGE
+                MOVE "6. View My Pending Connection Requests" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "7. View My Pending Connection Requests" TO WS-MESSAGE
+                MOVE "7. View My Network" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "8. View My Network" TO WS-MESSAGE
+                MOVE "8. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
                 MOVE "Enter your choice:" TO WS-MESSAGE
@@ -816,13 +813,13 @@
                         PERFORM SKILL-MENU
 
                     WHEN "6"
-                        MOVE "Y" TO WS-LOGOUT-SELECTED
-
-                    WHEN "7"
                         PERFORM VIEW-PENDING-REQUESTS
 
+                    WHEN "7"
+                        PERFORM VIEW-NETWORK
+
                     WHEN "8"
-                       PERFORM VIEW-NETWORK
+                        MOVE "Y" TO WS-LOGOUT-SELECTED
 
                     WHEN OTHER
                         MOVE "Invalid selection." TO WS-MESSAGE

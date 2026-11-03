@@ -15,13 +15,10 @@
                MOVE "2. Browse Jobs/Internships" TO WS-MESSAGE
                PERFORM WRITE-MESSAGE
 
-               MOVE "3. Back to Main Menu" TO WS-MESSAGE
+               MOVE "3. View My Applications" TO WS-MESSAGE
                PERFORM WRITE-MESSAGE
 
-               MOVE "4. Saved/Applied Jobs" TO WS-MESSAGE
-               PERFORM WRITE-MESSAGE
-
-               MOVE "5. View My Applications" TO WS-MESSAGE
+               MOVE "4. Back to Main Menu" TO WS-MESSAGE
                PERFORM WRITE-MESSAGE
 
                MOVE "Enter your choice:" TO WS-MESSAGE
@@ -45,13 +42,10 @@
                        PERFORM BROWSE-JOBS
 
                    WHEN "3"
-                       MOVE "Y" TO WS-JOB-BACK-SELECTED
+                       PERFORM VIEW-MY-APPLICATIONS
 
                    WHEN "4"
-                       PERFORM SAVED-JOBS-MENU
-
-                   WHEN "5"
-                       PERFORM VIEW-MY-APPLICATIONS
+                       MOVE "Y" TO WS-JOB-BACK-SELECTED
 
                    WHEN OTHER
                        MOVE "Invalid selection." TO WS-MESSAGE
