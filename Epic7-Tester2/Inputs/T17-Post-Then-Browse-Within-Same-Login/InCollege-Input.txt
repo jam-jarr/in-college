@@ -1,0 +1,16 @@
+1
+user
+Password1!
+3
+1
+QA Co-op
+Test newly posted jobs.
+Campus Hiring
+Remote
+NONE
+2
+4
+2
+0
+4
+8
