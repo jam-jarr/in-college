@@ -54,7 +54,7 @@
 
        *> stores each line written to the output file
        FD OUTPUT-FILE.
-       01 OUTPUT-RECORD PIC X(100).
+       01 OUTPUT-RECORD PIC X(500).
 
         *> stores account records between program runs
         FD ACCOUNT-FILE.
@@ -112,7 +112,7 @@
         WORKING-STORAGE SECTION.
 
        *> temporary values used while the program runs
-       01 WS-MESSAGE PIC X(100).
+       01 WS-MESSAGE PIC X(500).
         01 WS-USER-INPUT PIC X(500).
        01 WS-CHOICE PIC X.
        01 WS-INPUT-ENDED PIC X VALUE "N".
@@ -322,13 +322,23 @@
        01 WS-JOB-ID-LENGTH           PIC 9(3) VALUE 0.
        01 WS-JOB-ID-INDEX            PIC 9 VALUE 0.
        01 WS-JOB-ID-VALID            PIC X VALUE "N".
-       01 WS-SAVED-MENU-BACK         PIC X VALUE "N".
        01 WS-REQUESTED-SAVE-EVENT    PIC X.
-       01 WS-DISPLAY-SAVE-KIND       PIC X.
        01 WS-JOB-IS-SAVED            PIC X VALUE "N".
        01 WS-JOB-IS-APPLIED          PIC X VALUE "N".
        01 WS-SAVE-IO-ERROR           PIC X VALUE "N".
-       01 WS-MY-JOB-COUNT            PIC 9(6) VALUE 0.
+       *> browse jobs listing
+       01 WS-BROWSE-COUNT              PIC 9(6) VALUE 0.
+       01 WS-BROWSE-COUNT-DISPLAY      PIC Z(5)9.
+       01 WS-BROWSE-BACK               PIC X VALUE "N".
+       01 WS-DETAIL-DONE               PIC X VALUE "N".
+       01 WS-BROWSE-INDEX              PIC 9(4).
+       01 WS-SELECTED-JOB-ID           PIC 9(6).
+       01 WS-BROWSE-TABLE.
+          05 WS-BROWSE-ENTRY OCCURS 1000 TIMES.
+             10 WS-BROWSE-JOB-ID       PIC 9(6).
+             10 WS-BROWSE-JOB-TITLE    PIC X(50).
+             10 WS-BROWSE-JOB-EMPLOYER PIC X(50).
+             10 WS-BROWSE-JOB-LOCATION PIC X(50).
        *> Week 7 Developer #2: application report counter.
        01 WS-REPORT-COUNT         PIC 9(6) VALUE 0.
        01 WS-REPORT-COUNT-DISPLAY PIC Z(5)9.
@@ -767,13 +777,13 @@
                 MOVE "5. Learn a new skill" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "6. Logout" TO WS-MESSAGE
+                MOVE "6. View My Pending Connection Requests" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "7. View My Pending Connection Requests" TO WS-MESSAGE
+                MOVE "7. View My Network" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
-                MOVE "8. View My Network" TO WS-MESSAGE
+                MOVE "8. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
                 MOVE "Enter your choice:" TO WS-MESSAGE
@@ -803,13 +813,13 @@
                         PERFORM SKILL-MENU
 
                     WHEN "6"
-                        MOVE "Y" TO WS-LOGOUT-SELECTED
-
-                    WHEN "7"
                         PERFORM VIEW-PENDING-REQUESTS
 
+                    WHEN "7"
+                        PERFORM VIEW-NETWORK
+
                     WHEN "8"
-                       PERFORM VIEW-NETWORK
+                        MOVE "Y" TO WS-LOGOUT-SELECTED
 
                     WHEN OTHER
                         MOVE "Invalid selection." TO WS-MESSAGE
