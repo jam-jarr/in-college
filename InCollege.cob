@@ -54,7 +54,7 @@
 
        *> stores each line written to the output file
        FD OUTPUT-FILE.
-       01 OUTPUT-RECORD PIC X(100).
+       01 OUTPUT-RECORD PIC X(500).
 
         *> stores account records between program runs
         FD ACCOUNT-FILE.
@@ -112,7 +112,7 @@
         WORKING-STORAGE SECTION.
 
        *> temporary values used while the program runs
-       01 WS-MESSAGE PIC X(100).
+       01 WS-MESSAGE PIC X(500).
         01 WS-USER-INPUT PIC X(500).
        01 WS-CHOICE PIC X.
        01 WS-INPUT-ENDED PIC X VALUE "N".
