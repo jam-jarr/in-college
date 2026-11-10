@@ -173,7 +173,7 @@
        *> Epic 8 - messaging menu navigation
         01 WS-MSG-BACK PIC X VALUE "N".
 
-       
+
        *> Epic 8 - recipient validation
         01 WS-MSG-RECIPIENT PIC X(20).
         01 WS-MSG-USER-FOUND PIC X VALUE "N".
@@ -182,6 +182,9 @@
         01 WS-MSG-FILE-ERROR PIC X VALUE "N".
         01 WS-MSG-INDEX PIC 99.
 
+       *> Epic 8 - message content
+       01 WS-MSG-CONTENT PIC X(200).
+       01 WS-MSG-CONTENT-LENGTH PIC 9(3) VALUE 0.
 
         *> input mode: F = file (default), C = console
         01 WS-INPUT-MODE PIC X VALUE 'F'.
@@ -849,7 +852,7 @@
             END-PERFORM
 
             EXIT.
-       
+
         MESSAGES-MENU.
 
             MOVE "N" TO WS-MSG-BACK
@@ -878,7 +881,7 @@
                 END-IF
 
                 EVALUATE FUNCTION TRIM(WS-USER-INPUT)
-                   
+
                     WHEN "1"
                         PERFORM SEND-NEW-MESSAGE
 
@@ -956,10 +959,132 @@
                 EXIT PARAGRAPH
             END-IF
 
-            *> Temporary confirmation for interface testing only
-            MOVE "Recipient validated successfully."
+
+            *> Recipient is connected; collect message content
+            MOVE SPACES TO WS-MSG-CONTENT
+
+            MOVE "Enter your message (max 200 chars):"
                 TO WS-MESSAGE
             PERFORM WRITE-MESSAGE
+
+            PERFORM READ-USER-INPUT
+
+            IF INPUT-ENDED
+                EXIT PARAGRAPH
+            END-IF
+
+            COMPUTE WS-MSG-CONTENT-LENGTH =
+                FUNCTION LENGTH(
+                    FUNCTION TRIM(WS-USER-INPUT TRAILING))
+
+            IF WS-MSG-CONTENT-LENGTH = 0
+                MOVE "Message cannot be empty."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-MSG-CONTENT-LENGTH > 200
+                MOVE "Message exceeds 200 characters."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            MOVE WS-USER-INPUT(1:200)
+                TO WS-MSG-CONTENT
+
+            *> Storage will be integrated with Developer 2's module
+            MOVE "Message validated; storage not yet integrated."
+                TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
+
+            EXIT.
+
+
+        VALIDATE-MSG-RECIPIENT.
+
+            MOVE "N" TO WS-MSG-USER-FOUND
+            MOVE "N" TO WS-MSG-CONNECTED
+            MOVE "N" TO WS-MSG-EOF
+            MOVE "N" TO WS-MSG-FILE-ERROR
+
+            *> Check whether recipient account exists
+            PERFORM VARYING WS-MSG-INDEX FROM 1 BY 1
+                UNTIL WS-MSG-INDEX > WS-ACCOUNT-COUNT
+
+                IF WS-ACCOUNT-USERNAME(WS-MSG-INDEX)
+                    = WS-MSG-RECIPIENT
+                    MOVE "Y" TO WS-MSG-USER-FOUND
+                    EXIT PERFORM
+                END-IF
+
+            END-PERFORM
+
+            IF WS-MSG-USER-FOUND NOT = "Y"
+                EXIT PARAGRAPH
+            END-IF
+
+            *> Prevent messaging yourself
+            IF WS-MSG-RECIPIENT = WS-LOGIN-USERNAME
+                EXIT PARAGRAPH
+            END-IF
+
+            *> Check accepted connections in either direction
+            OPEN INPUT CONNECTION-FILE
+
+            IF WS-CONNECTION-FILE-STATUS NOT = "00"
+                AND WS-CONNECTION-FILE-STATUS NOT = "05"
+
+                MOVE "Unable to read connections."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                MOVE "Y" TO WS-MSG-FILE-ERROR
+                EXIT PARAGRAPH
+            END-IF
+
+            PERFORM UNTIL WS-MSG-EOF = "Y"
+
+                READ CONNECTION-FILE
+                    AT END
+                        MOVE "Y" TO WS-MSG-EOF
+
+                    NOT AT END
+                        IF CONNECTION-STATUS = "C"
+
+                            IF (CONNECTION-SENDER =
+                                WS-LOGIN-USERNAME
+                                AND CONNECTION-RECIPIENT =
+                                WS-MSG-RECIPIENT)
+
+                                OR
+
+                                (CONNECTION-RECIPIENT =
+                                WS-LOGIN-USERNAME
+                                AND CONNECTION-SENDER =
+                                WS-MSG-RECIPIENT)
+
+                                MOVE "Y" TO WS-MSG-CONNECTED
+                                EXIT PERFORM
+                            END-IF
+
+                        END-IF
+                END-READ
+
+                IF WS-CONNECTION-FILE-STATUS NOT = "00"
+                    AND WS-CONNECTION-FILE-STATUS NOT = "10"
+
+                    MOVE "Unable to read connections."
+                        TO WS-MESSAGE
+                    PERFORM WRITE-MESSAGE
+                    MOVE "Y" TO WS-MSG-FILE-ERROR
+                    EXIT PERFORM
+
+                END-IF
+
+            END-PERFORM
+
+            CLOSE CONNECTION-FILE
 
             EXIT.
 
