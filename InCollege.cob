@@ -170,6 +170,19 @@
             88 SKILL-BACK-SELECTED VALUE "Y".
             88 STAY-IN-SKILL-MENU VALUE "N".
 
+       *> Epic 8 - messaging menu navigation
+        01 WS-MSG-BACK PIC X VALUE "N".
+
+       
+       *> Epic 8 - recipient validation
+        01 WS-MSG-RECIPIENT PIC X(20).
+        01 WS-MSG-USER-FOUND PIC X VALUE "N".
+        01 WS-MSG-CONNECTED PIC X VALUE "N".
+        01 WS-MSG-EOF PIC X VALUE "N".
+        01 WS-MSG-FILE-ERROR PIC X VALUE "N".
+        01 WS-MSG-INDEX PIC 99.
+
+
         *> input mode: F = file (default), C = console
         01 WS-INPUT-MODE PIC X VALUE 'F'.
             88 FILE-INPUT-MODE VALUE 'F'.
@@ -786,6 +799,9 @@
                 MOVE "8. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
+                MOVE "9. Messages" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
                 MOVE "Enter your choice:" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
@@ -821,6 +837,9 @@
                     WHEN "8"
                         MOVE "Y" TO WS-LOGOUT-SELECTED
 
+                    WHEN "9"
+                        PERFORM MESSAGES-MENU
+
                     WHEN OTHER
                         MOVE "Invalid selection." TO WS-MESSAGE
                         PERFORM WRITE-MESSAGE
@@ -828,6 +847,119 @@
                 END-EVALUATE
 
             END-PERFORM
+
+            EXIT.
+       
+        MESSAGES-MENU.
+
+            MOVE "N" TO WS-MSG-BACK
+
+            PERFORM UNTIL WS-MSG-BACK = "Y" OR INPUT-ENDED
+
+                MOVE "--- Messages Menu ---" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "1. Send a New Message" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "2. View My Messages" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "3. Back to Main Menu" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "Enter your choice:" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                EVALUATE FUNCTION TRIM(WS-USER-INPUT)
+                   
+                    WHEN "1"
+                        PERFORM SEND-NEW-MESSAGE
+
+                    WHEN "2"
+                        MOVE "View My Messages is under construction."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+
+                    WHEN "3"
+                        MOVE "Y" TO WS-MSG-BACK
+
+                    WHEN OTHER
+                        MOVE "Invalid selection." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+
+                END-EVALUATE
+
+            END-PERFORM
+
+            EXIT.
+
+
+        SEND-NEW-MESSAGE.
+
+            MOVE SPACES TO WS-MSG-RECIPIENT
+            MOVE "N" TO WS-MSG-USER-FOUND
+            MOVE "N" TO WS-MSG-CONNECTED
+            MOVE "N" TO WS-MSG-FILE-ERROR
+
+            MOVE "Enter recipient's username (must be a connection):"
+                TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
+
+            PERFORM READ-USER-INPUT
+
+            IF INPUT-ENDED
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-USER-INPUT = SPACES
+                MOVE "Recipient username cannot be empty."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            IF FUNCTION LENGTH(
+                FUNCTION TRIM(WS-USER-INPUT TRAILING)) > 20
+                MOVE "Recipient username is too long."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            MOVE WS-USER-INPUT(1:20)
+                TO WS-MSG-RECIPIENT
+
+            PERFORM VALIDATE-MSG-RECIPIENT
+
+            IF WS-MSG-FILE-ERROR = "Y"
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-MSG-USER-FOUND NOT = "Y"
+                MOVE "User not found."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-MSG-CONNECTED NOT = "Y"
+                MOVE "You can only message users you are connected with."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            *> Temporary confirmation for interface testing only
+            MOVE "Recipient validated successfully."
+                TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
 
             EXIT.
 
