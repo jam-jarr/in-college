@@ -1,0 +1,4 @@
+user                Password1!  
+connected           Password1!  
+pending             Password1!  
+stranger            Password1!  
