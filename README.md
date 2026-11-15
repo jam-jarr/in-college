@@ -109,3 +109,34 @@ are single input and output text files. T12-T20 use matching case folders;
 their input folders include the initial data files, and their output folders
 include console output and the resulting data files. The output ZIP also
 contains the corrected T18 and T19 captures under `Retests/`.
+
+## Epic 8 - Messaging
+
+After logging in, choose **9. Messages** from the main menu. The Messages menu
+offers:
+
+1. **Send a New Message** - enter the username of a user you are connected
+   with, then enter the message text (1-200 characters). The message is saved
+   to `messages.txt` and the program reports
+   `Message sent to <username> successfully!`
+2. **View My Messages** - displays `View My Messages is under construction.`
+   (message retrieval is planned for Week 9).
+3. **Back to Main Menu**.
+
+A recipient must exist and must have an accepted connection with the sender
+(status `C` in `connections.txt`, in either direction). Unknown, pending,
+unconnected, and self recipients are rejected with an explanatory message.
+
+Messages persist as fixed-width records in `messages.txt` (created
+automatically at startup):
+
+```
+sender X(20) + recipient X(20) + timestamp X(19) + content X(200)
+```
+
+The timestamp is stored as `YYYY-MM-DD HH:MM:SS`. The record is append-only;
+the file is not rewritten. Prompts, confirmations, and errors are written to
+the console and `InCollege-Output.txt` exactly as with the other features.
+
+The root `InCollege-Input.txt` contains a sample send-message session. Run the
+program to regenerate `InCollege-Output.txt` and `messages.txt`.
