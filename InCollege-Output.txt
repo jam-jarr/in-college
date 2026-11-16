@@ -4,7 +4,7 @@ Welcome to InCollege!
 Enter your choice:
 1
 Please enter your username:
-user
+user2
 Please enter your password:
 Password1!
 You have successfully logged in
@@ -26,10 +26,28 @@ Enter your choice:
 Enter your choice:
 1
 Enter recipient's username (must be a connection):
+unknownuser
+User not found.
+--- Messages Menu ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:
+1
+Enter recipient's username (must be a connection):
 searchtarget
+You can only message users you are connected with.
+--- Messages Menu ---
+1. Send a New Message
+2. View My Messages
+3. Back to Main Menu
+Enter your choice:
+1
+Enter recipient's username (must be a connection):
+user
 Enter your message (max 200 chars):
-Hello! Are you free to review my resume this week?
-Message sent to searchtarget successfully!
+Hello, user! Can we review my resume together this week?
+Message sent to user successfully!
 --- Messages Menu ---
 1. Send a New Message
 2. View My Messages

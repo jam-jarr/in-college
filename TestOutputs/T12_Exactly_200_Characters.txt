@@ -29,7 +29,7 @@ Enter recipient's username (must be a connection):
 connected
 Enter your message (max 200 chars):
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-Message validated; storage not yet integrated.
+Message sent to connected successfully!
 --- Messages Menu ---
 1. Send a New Message
 2. View My Messages

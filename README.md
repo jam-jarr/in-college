@@ -138,5 +138,15 @@ The timestamp is stored as `YYYY-MM-DD HH:MM:SS`. The record is append-only;
 the file is not rewritten. Prompts, confirmations, and errors are written to
 the console and `InCollege-Output.txt` exactly as with the other features.
 
-The root `InCollege-Input.txt` contains a sample send-message session. Run the
-program to regenerate `InCollege-Output.txt` and `messages.txt`.
+The root `InCollege-Input.txt` contains a sample session using the root account
+and connection files. It shows an unknown recipient, a pending connection,
+a successful send to an accepted connection, and the under-construction view.
+Run the program to regenerate `InCollege-Output.txt`; the successful message is
+appended to `messages.txt`.
+
+Run `python package_epic8_tests.py` to rebuild the Epic 8 input and output
+archives from all 21 executable Tester 1 and Tester 2 cases. The input archive
+contains the `TestInputs` folder with account and connection fixtures. The
+output archive contains the `TestOutputs` folder with the T18 message-record
+inspection evidence. The root sample input and output files are separate from
+these test archives.
