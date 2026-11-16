@@ -45,6 +45,12 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-SAVE-FILE-STATUS.
 
+           *> Epic 8 persistent sent messages.
+           SELECT OPTIONAL MESSAGE-DATA-FILE
+               ASSIGN TO "messages.txt"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-MESSAGE-FILE-STATUS.
+
         DATA DIVISION.
        FILE SECTION.
 
@@ -108,6 +114,14 @@
            05 SAVE-RECORD-USER        PIC X(20).
            05 SAVE-RECORD-JOB-ID      PIC 9(6).
            05 SAVE-RECORD-EVENT       PIC X.
+
+       *> Epic 8 sent messages: sender, recipient, timestamp, content.
+       FD MESSAGE-DATA-FILE.
+       01 MESSAGE-DATA-RECORD.
+           05 MESSAGE-RECORD-SENDER     PIC X(20).
+           05 MESSAGE-RECORD-RECIPIENT  PIC X(20).
+           05 MESSAGE-RECORD-TIMESTAMP  PIC X(19).
+           05 MESSAGE-RECORD-CONTENT    PIC X(200).
 
         WORKING-STORAGE SECTION.
 
@@ -185,6 +199,12 @@
        *> Epic 8 - message content
        01 WS-MSG-CONTENT PIC X(200).
        01 WS-MSG-CONTENT-LENGTH PIC 9(3) VALUE 0.
+
+       *> Epic 8 - message persistence
+       01 WS-CURRENT-DATE PIC X(21).
+       01 WS-MSG-TIMESTAMP PIC X(19).
+       01 WS-MSG-SAVE-OK PIC X VALUE "N".
+       01 WS-MESSAGE-FILE-STATUS PIC XX.
 
         *> input mode: F = file (default), C = console
         01 WS-INPUT-MODE PIC X VALUE 'F'.
@@ -472,6 +492,14 @@
                STOP RUN
            END-IF
            CLOSE SAVE-DATA-FILE
+
+           OPEN EXTEND MESSAGE-DATA-FILE
+           IF WS-MESSAGE-FILE-STATUS NOT = "00"
+               AND WS-MESSAGE-FILE-STATUS NOT = "05"
+               DISPLAY "Unable to initialize messages.txt."
+               STOP RUN
+           END-IF
+           CLOSE MESSAGE-DATA-FILE
            EXIT.
 
        WRITE-MESSAGE.
@@ -994,10 +1022,73 @@
             MOVE WS-USER-INPUT(1:200)
                 TO WS-MSG-CONTENT
 
-            *> Storage will be integrated with Developer 2's module
-            MOVE "Message validated; storage not yet integrated."
-                TO WS-MESSAGE
-            PERFORM WRITE-MESSAGE
+            PERFORM STORE-MESSAGE
+
+            IF WS-MSG-SAVE-OK = "Y"
+                MOVE SPACES TO WS-MESSAGE
+                STRING "Message sent to "
+                    FUNCTION TRIM(WS-MSG-RECIPIENT)
+                    " successfully!"
+                    INTO WS-MESSAGE
+                END-STRING
+                PERFORM WRITE-MESSAGE
+            END-IF
+
+            EXIT.
+
+
+        STORE-MESSAGE.
+
+            MOVE "N" TO WS-MSG-SAVE-OK
+
+            PERFORM BUILD-MSG-TIMESTAMP
+
+            MOVE WS-LOGIN-USERNAME TO MESSAGE-RECORD-SENDER
+            MOVE WS-MSG-RECIPIENT TO MESSAGE-RECORD-RECIPIENT
+            MOVE WS-MSG-TIMESTAMP TO MESSAGE-RECORD-TIMESTAMP
+            MOVE WS-MSG-CONTENT TO MESSAGE-RECORD-CONTENT
+
+            OPEN EXTEND MESSAGE-DATA-FILE
+
+            IF WS-MESSAGE-FILE-STATUS NOT = "00"
+                AND WS-MESSAGE-FILE-STATUS NOT = "05"
+                MOVE "Unable to save message."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            WRITE MESSAGE-DATA-RECORD
+
+            IF WS-MESSAGE-FILE-STATUS NOT = "00"
+                MOVE "Unable to save message."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                CLOSE MESSAGE-DATA-FILE
+                EXIT PARAGRAPH
+            END-IF
+
+            CLOSE MESSAGE-DATA-FILE
+            MOVE "Y" TO WS-MSG-SAVE-OK
+
+            EXIT.
+
+
+        BUILD-MSG-TIMESTAMP.
+
+            MOVE FUNCTION CURRENT-DATE TO WS-CURRENT-DATE
+
+            MOVE WS-CURRENT-DATE(1:4) TO WS-MSG-TIMESTAMP(1:4)
+            MOVE "-" TO WS-MSG-TIMESTAMP(5:1)
+            MOVE WS-CURRENT-DATE(5:2) TO WS-MSG-TIMESTAMP(6:2)
+            MOVE "-" TO WS-MSG-TIMESTAMP(8:1)
+            MOVE WS-CURRENT-DATE(7:2) TO WS-MSG-TIMESTAMP(9:2)
+            MOVE " " TO WS-MSG-TIMESTAMP(11:1)
+            MOVE WS-CURRENT-DATE(9:2) TO WS-MSG-TIMESTAMP(12:2)
+            MOVE ":" TO WS-MSG-TIMESTAMP(14:1)
+            MOVE WS-CURRENT-DATE(11:2) TO WS-MSG-TIMESTAMP(15:2)
+            MOVE ":" TO WS-MSG-TIMESTAMP(17:1)
+            MOVE WS-CURRENT-DATE(13:2) TO WS-MSG-TIMESTAMP(18:2)
 
             EXIT.
 
