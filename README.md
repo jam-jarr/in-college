@@ -101,11 +101,45 @@ All choices are read in order from `InCollege-Input.txt`; the program does not
 ask for live keyboard input in its default mode. Prompts, job details,
 application confirmations, and reports appear on the console and in
 `InCollege-Output.txt` with identical content. The root input and output files
-show a sample browse, apply, and report session.
+show the Epic 8 messaging session described below.
 
-The Epic 7 acceptance cases are packaged in
-`Epic7-Storyx-Test-Input.zip` and `Epic7-Storyx-Test-Output.zip`. T01-T11
-are single input and output text files. T12-T20 use matching case folders;
-their input folders include the initial data files, and their output folders
-include console output and the resulting data files. The output ZIP also
-contains the corrected T18 and T19 captures under `Retests/`.
+## Epic 8 - Messaging
+
+After logging in, choose **9. Messages** from the main menu. The Messages menu
+offers:
+
+1. **Send a New Message** - enter the username of a user you are connected
+   with, then enter the message text (1-200 characters). The message is saved
+   to `messages.txt` and the program reports
+   `Message sent to <username> successfully!`
+2. **View My Messages** - displays `View My Messages is under construction.`
+   (message retrieval is planned for Week 9).
+3. **Back to Main Menu**.
+
+A recipient must exist and must have an accepted connection with the sender
+(status `C` in `connections.txt`, in either direction). Unknown, pending,
+unconnected, and self recipients are rejected with an explanatory message.
+
+Messages persist as fixed-width records in `messages.txt` (created
+automatically at startup):
+
+```
+sender X(20) + recipient X(20) + timestamp X(19) + content X(200)
+```
+
+The timestamp is stored as `YYYY-MM-DD HH:MM:SS`. The record is append-only;
+the file is not rewritten. Prompts, confirmations, and errors are written to
+the console and `InCollege-Output.txt` exactly as with the other features.
+
+The root `InCollege-Input.txt` contains a sample session using the root account
+and connection files. It shows an unknown recipient, a pending connection,
+a successful send to an accepted connection, and the under-construction view.
+Run the program to regenerate `InCollege-Output.txt`; the successful message is
+appended to `messages.txt`.
+
+The `Epic8-Storyx-Test-Input.zip` and `Epic8-Storyx-Test-Output.zip` archives
+contain all 21 executable tester cases. The input archive contains a
+`TestInputs` folder with account and connection fixtures; the output archive
+contains a `TestOutputs` folder with the T18 message-record inspection
+evidence. The root sample input and output files are separate from these test
+archives.

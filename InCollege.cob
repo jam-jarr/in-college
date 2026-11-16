@@ -45,6 +45,12 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-SAVE-FILE-STATUS.
 
+           *> Epic 8 persistent sent messages.
+           SELECT OPTIONAL MESSAGE-DATA-FILE
+               ASSIGN TO "messages.txt"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-MESSAGE-FILE-STATUS.
+
         DATA DIVISION.
        FILE SECTION.
 
@@ -109,6 +115,14 @@
            05 SAVE-RECORD-JOB-ID      PIC 9(6).
            05 SAVE-RECORD-EVENT       PIC X.
 
+       *> Epic 8 sent messages: sender, recipient, timestamp, content.
+       FD MESSAGE-DATA-FILE.
+       01 MESSAGE-DATA-RECORD.
+           05 MESSAGE-RECORD-SENDER     PIC X(20).
+           05 MESSAGE-RECORD-RECIPIENT  PIC X(20).
+           05 MESSAGE-RECORD-TIMESTAMP  PIC X(19).
+           05 MESSAGE-RECORD-CONTENT    PIC X(200).
+
         WORKING-STORAGE SECTION.
 
        *> temporary values used while the program runs
@@ -169,6 +183,28 @@
         01 WS-SKILL-BACK-SELECTED PIC X VALUE "N".
             88 SKILL-BACK-SELECTED VALUE "Y".
             88 STAY-IN-SKILL-MENU VALUE "N".
+
+       *> Epic 8 - messaging menu navigation
+        01 WS-MSG-BACK PIC X VALUE "N".
+
+
+       *> Epic 8 - recipient validation
+        01 WS-MSG-RECIPIENT PIC X(20).
+        01 WS-MSG-USER-FOUND PIC X VALUE "N".
+        01 WS-MSG-CONNECTED PIC X VALUE "N".
+        01 WS-MSG-EOF PIC X VALUE "N".
+        01 WS-MSG-FILE-ERROR PIC X VALUE "N".
+        01 WS-MSG-INDEX PIC 99.
+
+       *> Epic 8 - message content
+       01 WS-MSG-CONTENT PIC X(200).
+       01 WS-MSG-CONTENT-LENGTH PIC 9(3) VALUE 0.
+
+       *> Epic 8 - message persistence
+       01 WS-CURRENT-DATE PIC X(21).
+       01 WS-MSG-TIMESTAMP PIC X(19).
+       01 WS-MSG-SAVE-OK PIC X VALUE "N".
+       01 WS-MESSAGE-FILE-STATUS PIC XX.
 
         *> input mode: F = file (default), C = console
         01 WS-INPUT-MODE PIC X VALUE 'F'.
@@ -456,6 +492,14 @@
                STOP RUN
            END-IF
            CLOSE SAVE-DATA-FILE
+
+           OPEN EXTEND MESSAGE-DATA-FILE
+           IF WS-MESSAGE-FILE-STATUS NOT = "00"
+               AND WS-MESSAGE-FILE-STATUS NOT = "05"
+               DISPLAY "Unable to initialize messages.txt."
+               STOP RUN
+           END-IF
+           CLOSE MESSAGE-DATA-FILE
            EXIT.
 
        WRITE-MESSAGE.
@@ -786,6 +830,9 @@
                 MOVE "8. Logout" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
+                MOVE "9. Messages" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
                 MOVE "Enter your choice:" TO WS-MESSAGE
                 PERFORM WRITE-MESSAGE
 
@@ -821,6 +868,9 @@
                     WHEN "8"
                         MOVE "Y" TO WS-LOGOUT-SELECTED
 
+                    WHEN "9"
+                        PERFORM MESSAGES-MENU
+
                     WHEN OTHER
                         MOVE "Invalid selection." TO WS-MESSAGE
                         PERFORM WRITE-MESSAGE
@@ -828,6 +878,304 @@
                 END-EVALUATE
 
             END-PERFORM
+
+            EXIT.
+
+        MESSAGES-MENU.
+
+            MOVE "N" TO WS-MSG-BACK
+
+            PERFORM UNTIL WS-MSG-BACK = "Y" OR INPUT-ENDED
+
+                MOVE "--- Messages Menu ---" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "1. Send a New Message" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "2. View My Messages" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "3. Back to Main Menu" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                MOVE "Enter your choice:" TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+
+                PERFORM READ-USER-INPUT
+
+                IF INPUT-ENDED
+                    EXIT PERFORM
+                END-IF
+
+                EVALUATE FUNCTION TRIM(WS-USER-INPUT)
+
+                    WHEN "1"
+                        PERFORM SEND-NEW-MESSAGE
+
+                    WHEN "2"
+                        MOVE "View My Messages is under construction."
+                            TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+
+                    WHEN "3"
+                        MOVE "Y" TO WS-MSG-BACK
+
+                    WHEN OTHER
+                        MOVE "Invalid selection." TO WS-MESSAGE
+                        PERFORM WRITE-MESSAGE
+
+                END-EVALUATE
+
+            END-PERFORM
+
+            EXIT.
+
+
+        SEND-NEW-MESSAGE.
+
+            MOVE SPACES TO WS-MSG-RECIPIENT
+            MOVE "N" TO WS-MSG-USER-FOUND
+            MOVE "N" TO WS-MSG-CONNECTED
+            MOVE "N" TO WS-MSG-FILE-ERROR
+
+            MOVE "Enter recipient's username (must be a connection):"
+                TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
+
+            PERFORM READ-USER-INPUT
+
+            IF INPUT-ENDED
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-USER-INPUT = SPACES
+                MOVE "Recipient username cannot be empty."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            IF FUNCTION LENGTH(
+                FUNCTION TRIM(WS-USER-INPUT TRAILING)) > 20
+                MOVE "Recipient username is too long."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            MOVE WS-USER-INPUT(1:20)
+                TO WS-MSG-RECIPIENT
+
+            PERFORM VALIDATE-MSG-RECIPIENT
+
+            IF WS-MSG-FILE-ERROR = "Y"
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-MSG-USER-FOUND NOT = "Y"
+                MOVE "User not found."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-MSG-CONNECTED NOT = "Y"
+                MOVE "You can only message users you are connected with."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+
+            *> Recipient is connected; collect message content
+            MOVE SPACES TO WS-MSG-CONTENT
+
+            MOVE "Enter your message (max 200 chars):"
+                TO WS-MESSAGE
+            PERFORM WRITE-MESSAGE
+
+            PERFORM READ-USER-INPUT
+
+            IF INPUT-ENDED
+                EXIT PARAGRAPH
+            END-IF
+
+            COMPUTE WS-MSG-CONTENT-LENGTH =
+                FUNCTION LENGTH(
+                    FUNCTION TRIM(WS-USER-INPUT TRAILING))
+
+            IF WS-MSG-CONTENT-LENGTH = 0
+                MOVE "Message cannot be empty."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            IF WS-MSG-CONTENT-LENGTH > 200
+                MOVE "Message exceeds 200 characters."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            MOVE WS-USER-INPUT(1:200)
+                TO WS-MSG-CONTENT
+
+            PERFORM STORE-MESSAGE
+
+            IF WS-MSG-SAVE-OK = "Y"
+                MOVE SPACES TO WS-MESSAGE
+                STRING "Message sent to "
+                    FUNCTION TRIM(WS-MSG-RECIPIENT)
+                    " successfully!"
+                    INTO WS-MESSAGE
+                END-STRING
+                PERFORM WRITE-MESSAGE
+            END-IF
+
+            EXIT.
+
+
+        STORE-MESSAGE.
+
+            MOVE "N" TO WS-MSG-SAVE-OK
+
+            PERFORM BUILD-MSG-TIMESTAMP
+
+            MOVE WS-LOGIN-USERNAME TO MESSAGE-RECORD-SENDER
+            MOVE WS-MSG-RECIPIENT TO MESSAGE-RECORD-RECIPIENT
+            MOVE WS-MSG-TIMESTAMP TO MESSAGE-RECORD-TIMESTAMP
+            MOVE WS-MSG-CONTENT TO MESSAGE-RECORD-CONTENT
+
+            OPEN EXTEND MESSAGE-DATA-FILE
+
+            IF WS-MESSAGE-FILE-STATUS NOT = "00"
+                AND WS-MESSAGE-FILE-STATUS NOT = "05"
+                MOVE "Unable to save message."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                EXIT PARAGRAPH
+            END-IF
+
+            WRITE MESSAGE-DATA-RECORD
+
+            IF WS-MESSAGE-FILE-STATUS NOT = "00"
+                MOVE "Unable to save message."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                CLOSE MESSAGE-DATA-FILE
+                EXIT PARAGRAPH
+            END-IF
+
+            CLOSE MESSAGE-DATA-FILE
+            MOVE "Y" TO WS-MSG-SAVE-OK
+
+            EXIT.
+
+
+        BUILD-MSG-TIMESTAMP.
+
+            MOVE FUNCTION CURRENT-DATE TO WS-CURRENT-DATE
+
+            MOVE WS-CURRENT-DATE(1:4) TO WS-MSG-TIMESTAMP(1:4)
+            MOVE "-" TO WS-MSG-TIMESTAMP(5:1)
+            MOVE WS-CURRENT-DATE(5:2) TO WS-MSG-TIMESTAMP(6:2)
+            MOVE "-" TO WS-MSG-TIMESTAMP(8:1)
+            MOVE WS-CURRENT-DATE(7:2) TO WS-MSG-TIMESTAMP(9:2)
+            MOVE " " TO WS-MSG-TIMESTAMP(11:1)
+            MOVE WS-CURRENT-DATE(9:2) TO WS-MSG-TIMESTAMP(12:2)
+            MOVE ":" TO WS-MSG-TIMESTAMP(14:1)
+            MOVE WS-CURRENT-DATE(11:2) TO WS-MSG-TIMESTAMP(15:2)
+            MOVE ":" TO WS-MSG-TIMESTAMP(17:1)
+            MOVE WS-CURRENT-DATE(13:2) TO WS-MSG-TIMESTAMP(18:2)
+
+            EXIT.
+
+
+        VALIDATE-MSG-RECIPIENT.
+
+            MOVE "N" TO WS-MSG-USER-FOUND
+            MOVE "N" TO WS-MSG-CONNECTED
+            MOVE "N" TO WS-MSG-EOF
+            MOVE "N" TO WS-MSG-FILE-ERROR
+
+            *> Check whether recipient account exists
+            PERFORM VARYING WS-MSG-INDEX FROM 1 BY 1
+                UNTIL WS-MSG-INDEX > WS-ACCOUNT-COUNT
+
+                IF WS-ACCOUNT-USERNAME(WS-MSG-INDEX)
+                    = WS-MSG-RECIPIENT
+                    MOVE "Y" TO WS-MSG-USER-FOUND
+                    EXIT PERFORM
+                END-IF
+
+            END-PERFORM
+
+            IF WS-MSG-USER-FOUND NOT = "Y"
+                EXIT PARAGRAPH
+            END-IF
+
+            *> Prevent messaging yourself
+            IF WS-MSG-RECIPIENT = WS-LOGIN-USERNAME
+                EXIT PARAGRAPH
+            END-IF
+
+            *> Check accepted connections in either direction
+            OPEN INPUT CONNECTION-FILE
+
+            IF WS-CONNECTION-FILE-STATUS NOT = "00"
+                AND WS-CONNECTION-FILE-STATUS NOT = "05"
+
+                MOVE "Unable to read connections."
+                    TO WS-MESSAGE
+                PERFORM WRITE-MESSAGE
+                MOVE "Y" TO WS-MSG-FILE-ERROR
+                EXIT PARAGRAPH
+            END-IF
+
+            PERFORM UNTIL WS-MSG-EOF = "Y"
+
+                READ CONNECTION-FILE
+                    AT END
+                        MOVE "Y" TO WS-MSG-EOF
+
+                    NOT AT END
+                        IF CONNECTION-STATUS = "C"
+
+                            IF (CONNECTION-SENDER =
+                                WS-LOGIN-USERNAME
+                                AND CONNECTION-RECIPIENT =
+                                WS-MSG-RECIPIENT)
+
+                                OR
+
+                                (CONNECTION-RECIPIENT =
+                                WS-LOGIN-USERNAME
+                                AND CONNECTION-SENDER =
+                                WS-MSG-RECIPIENT)
+
+                                MOVE "Y" TO WS-MSG-CONNECTED
+                                EXIT PERFORM
+                            END-IF
+
+                        END-IF
+                END-READ
+
+                IF WS-CONNECTION-FILE-STATUS NOT = "00"
+                    AND WS-CONNECTION-FILE-STATUS NOT = "10"
+
+                    MOVE "Unable to read connections."
+                        TO WS-MESSAGE
+                    PERFORM WRITE-MESSAGE
+                    MOVE "Y" TO WS-MSG-FILE-ERROR
+                    EXIT PERFORM
+
+                END-IF
+
+            END-PERFORM
+
+            CLOSE CONNECTION-FILE
 
             EXIT.
 
