@@ -1,6 +1,6 @@
-Week 8:
-Giarratana, Jamie: Developer #2
-Gonzalez, Ivan: Tester #1
-Goz, Cameron: Tester #2
-Hasan, Mahmoud: Scrum Master
-Hashmi, Aayet: Developer #1
+Week 9:
+Giarratana, Jamie: Tester #2
+Gonzalez, Ivan: Tester #2
+Goz, Cameron: Scrum Master
+Hasan, Mahmoud: Developer #1
+Hashmi, Aayet: Developer #2
