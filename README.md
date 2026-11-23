@@ -112,8 +112,7 @@ offers:
    with, then enter the message text (1-200 characters). The message is saved
    to `messages.txt` and the program reports
    `Message sent to <username> successfully!`
-2. **View My Messages** - displays `View My Messages is under construction.`
-   (message retrieval is planned for Week 9).
+2. **View My Messages** - was a Week 8 placeholder. Epic 9 now displays received messages (see below).
 3. **Back to Main Menu**.
 
 A recipient must exist and must have an accepted connection with the sender
@@ -143,3 +142,34 @@ contain all 21 executable tester cases. The input archive contains a
 contains a `TestOutputs` folder with the T18 message-record inspection
 evidence. The root sample input and output files are separate from these test
 archives.
+
+
+## Epic 9 - View My Messages
+
+The **9. Messages** menu now supports **2. View My Messages**. The display
+uses the Epic 9 inbox reader to show only messages addressed to the logged-in
+user. Messages appear in `messages.txt` file order (oldest first), each with
+`From:`, `Message:`, and `Sent:` fields. If there are none, the program prints
+`You have no messages at this time.`. A read error produces an error notice.
+
+The inbox reader remains responsible for reading and filtering `messages.txt`;
+`ViewMessages.cob` is the display-only copybook. All output uses the existing
+`WRITE-MESSAGE` paragraph, so the same output is sent to the console and
+`InCollege-Output.txt`. The display does not change or delete any messages;
+received messages remain viewable on subsequent program runs.
+
+Example `InCollege-Input.txt` for an existing `user` account:
+
+```text
+1
+user
+Password1!
+9
+2
+3
+8
+```
+
+Compile as before from the repo root: `cobc -x -o InCollege InCollege.cob`.
+The compiler resolves `COPY "ViewMessages.cob".` from that directory. See
+`test-cases/epic9/` for no-message, single-message and multi-sender fixtures.

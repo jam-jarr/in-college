@@ -924,9 +924,7 @@
                         PERFORM SEND-NEW-MESSAGE
 
                     WHEN "2"
-                        MOVE "View My Messages is under construction."
-                            TO WS-MESSAGE
-                        PERFORM WRITE-MESSAGE
+                        PERFORM VIEW-MY-MESSAGES
 
                     WHEN "3"
                         MOVE "Y" TO WS-MSG-BACK
@@ -2638,3 +2636,5 @@
     PERFORM WRITE-MESSAGE
 
     EXIT.
+
+       COPY "ViewMessages.cob".
