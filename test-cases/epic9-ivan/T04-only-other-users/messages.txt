@@ -1,0 +1,2 @@
+user                user2               2026-11-20 10:00:00NOT YOUR INBOX A                                                                                                                                                                                        
+user2               searchtarget        2026-11-20 11:00:00NOT YOUR INBOX B                                                                                                                                                                                        

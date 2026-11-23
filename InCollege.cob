@@ -206,6 +206,16 @@
        01 WS-MSG-SAVE-OK PIC X VALUE "N".
        01 WS-MESSAGE-FILE-STATUS PIC XX.
 
+       *> Epic 9 - inbox reader: developers share these result fields.
+       01 WS-INBOX-READY          PIC X VALUE "N".
+       01 WS-INBOX-EOF            PIC X VALUE "N".
+       01 WS-INBOX-FILE-ERROR     PIC X VALUE "N".
+       01 WS-INBOX-MATCH-FOUND    PIC X VALUE "N".
+       01 WS-INBOX-COUNT          PIC 9(6) VALUE 0.
+       01 WS-INBOX-SENDER         PIC X(20).
+       01 WS-INBOX-TIMESTAMP      PIC X(19).
+       01 WS-INBOX-CONTENT        PIC X(200).
+
         *> input mode: F = file (default), C = console
         01 WS-INPUT-MODE PIC X VALUE 'F'.
             88 FILE-INPUT-MODE VALUE 'F'.
@@ -914,9 +924,7 @@
                         PERFORM SEND-NEW-MESSAGE
 
                     WHEN "2"
-                        MOVE "View My Messages is under construction."
-                            TO WS-MESSAGE
-                        PERFORM WRITE-MESSAGE
+                        PERFORM VIEW-MY-MESSAGES
 
                     WHEN "3"
                         MOVE "Y" TO WS-MSG-BACK
@@ -1092,6 +1100,75 @@
 
             EXIT.
 
+
+        *> Epic 9 - read the existing messages.txt one record at a time.
+        *> Developer 2 calls OPEN, then READ-NEXT repeatedly, then CLOSE.
+        *> Only matching messages are returned in WS-INBOX-* fields.
+        OPEN-INBOX-READER.
+            MOVE "N" TO WS-INBOX-READY
+            MOVE "N" TO WS-INBOX-EOF
+            MOVE "N" TO WS-INBOX-FILE-ERROR
+            MOVE "N" TO WS-INBOX-MATCH-FOUND
+            MOVE ZERO TO WS-INBOX-COUNT
+            MOVE SPACES TO WS-INBOX-SENDER
+                           WS-INBOX-TIMESTAMP
+                           WS-INBOX-CONTENT
+
+            OPEN INPUT MESSAGE-DATA-FILE
+            IF WS-MESSAGE-FILE-STATUS = "00"
+                OR WS-MESSAGE-FILE-STATUS = "05"
+                MOVE "Y" TO WS-INBOX-READY
+            ELSE
+                MOVE "Y" TO WS-INBOX-FILE-ERROR
+                MOVE "Y" TO WS-INBOX-EOF
+            END-IF
+            EXIT.
+
+        READ-NEXT-INBOX-MESSAGE.
+            MOVE "N" TO WS-INBOX-MATCH-FOUND
+            IF WS-INBOX-READY NOT = "Y" OR WS-INBOX-EOF = "Y"
+                EXIT PARAGRAPH
+            END-IF
+
+            PERFORM UNTIL WS-INBOX-EOF = "Y"
+                READ MESSAGE-DATA-FILE
+                    AT END
+                        MOVE "Y" TO WS-INBOX-EOF
+                    NOT AT END
+                        IF MESSAGE-RECORD-RECIPIENT =
+                            WS-LOGIN-USERNAME
+                            MOVE MESSAGE-RECORD-SENDER
+                                TO WS-INBOX-SENDER
+                            MOVE MESSAGE-RECORD-TIMESTAMP
+                                TO WS-INBOX-TIMESTAMP
+                            MOVE MESSAGE-RECORD-CONTENT
+                                TO WS-INBOX-CONTENT
+                            ADD 1 TO WS-INBOX-COUNT
+                            MOVE "Y" TO WS-INBOX-MATCH-FOUND
+                        END-IF
+                END-READ
+
+                IF WS-MESSAGE-FILE-STATUS NOT = "00"
+                    AND WS-MESSAGE-FILE-STATUS NOT = "10"
+                    MOVE "Y" TO WS-INBOX-FILE-ERROR
+                    MOVE "Y" TO WS-INBOX-EOF
+                END-IF
+
+                IF WS-INBOX-MATCH-FOUND = "Y"
+                    EXIT PERFORM
+                END-IF
+            END-PERFORM
+            EXIT.
+
+        CLOSE-INBOX-READER.
+            IF WS-INBOX-READY = "Y"
+                CLOSE MESSAGE-DATA-FILE
+                IF WS-MESSAGE-FILE-STATUS NOT = "00"
+                    MOVE "Y" TO WS-INBOX-FILE-ERROR
+                END-IF
+                MOVE "N" TO WS-INBOX-READY
+            END-IF
+            EXIT.
 
         VALIDATE-MSG-RECIPIENT.
 
@@ -2559,3 +2636,5 @@
     PERFORM WRITE-MESSAGE
 
     EXIT.
+
+       COPY "ViewMessages.cob".
