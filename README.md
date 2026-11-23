@@ -130,18 +130,8 @@ The timestamp is stored as `YYYY-MM-DD HH:MM:SS`. The record is append-only;
 the file is not rewritten. Prompts, confirmations, and errors are written to
 the console and `InCollege-Output.txt` exactly as with the other features.
 
-The root `InCollege-Input.txt` contains a sample session using the root account
-and connection files. It shows an unknown recipient, a pending connection,
-a successful send to an accepted connection, and the under-construction view.
-Run the program to regenerate `InCollege-Output.txt`; the successful message is
-appended to `messages.txt`.
-
-The `Epic8-Storyx-Test-Input.zip` and `Epic8-Storyx-Test-Output.zip` archives
-contain all 21 executable tester cases. The input archive contains a
-`TestInputs` folder with account and connection fixtures; the output archive
-contains a `TestOutputs` folder with the T18 message-record inspection
-evidence. The root sample input and output files are separate from these test
-archives.
+The root `InCollege-Input.txt` and `InCollege-Output.txt` now show a Week 9
+session in which `user` views a message sent by `user2`.
 
 
 ## Epic 9 - View My Messages
@@ -158,7 +148,7 @@ The inbox reader remains responsible for reading and filtering `messages.txt`;
 `InCollege-Output.txt`. The display does not change or delete any messages;
 received messages remain viewable on subsequent program runs.
 
-Example `InCollege-Input.txt` for an existing `user` account:
+Example `InCollege-Input.txt` for the existing `user` account, which has a received message in the sample `messages.txt`:
 
 ```text
 1
@@ -173,3 +163,9 @@ Password1!
 Compile as before from the repo root: `cobc -x -o InCollege InCollege.cob`.
 The compiler resolves `COPY "ViewMessages.cob".` from that directory. See
 `test-cases/epic9/` for no-message, single-message and multi-sender fixtures.
+
+The two `Epic9-Storyx-Test-*.zip` archives contain 22 test scenarios from the
+independent tester and the end-to-end/regression suite. `TestInputs/Tester1`
+and `TestInputs/Regression` hold the input files and required storage fixtures;
+`TestOutputs/Tester1` and `TestOutputs/Regression` hold the actual program
+output files. Each regression session input has a matching actual output.
